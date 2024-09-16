@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>產品編輯</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html,
+    body {
+      background-color: rgb(250, 250, 250);
+      color: rgb(70, 70, 70);
+      font-family: "Microsoft JhengHei", sans-serif;
+      font-size: 1rem;
+    }
+    
+    #_main_menu {
+      width: 200px;
+      background-color: #40698b;
+      height: 100vh; /* 讓側邊欄覆蓋整個視口高度 */
+      box-shadow: 2px 0px 8px 0 rgba(0, 0, 0, 0.04);
+      position: fixed;
+      top: 0; /* 從視口的最上面開始 */
+      left: 0;
+      z-index: 1000; /* 確保側邊欄層級高於頂部選單 */
+    }
+    @media (max-width: 1024px) {
+      #_main_menu {
+        display: none;
+        left: -100%;
+      }
+    }
+
+    #_main_menu ul {
+      margin: 0 15px;
+      padding-top: 30px;
+      list-style-type: none;
+    }
+
+    #_main_menu ul li {
+      padding: 0 15px;
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+    }
+
+    #_main_menu ul li a {
+      color: white;
+      display: block;
+      padding: 10px;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+
+    #_main_menu ul li a:hover {
+      background-color: #305c7c;
+    }
+    /* 頂部選單 */
+    #_top_menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 500;
+    }
+
+    #_top_menu ._container {
+      width: 100%;
+      min-height: 50px;
+      background-color: white;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    @media (min-width: 1024px) {
+      #_top_menu ._container {
+        padding-left: 200px;
+      }
+    }
+
+    #_top_menu ._container .content {
+      padding: 0 15px;
+      min-height: 50px;
+      box-shadow: 10px 2px 8px 0 rgba(0, 0, 0, 0.06);
+      margin-left: auto;
+      align-items: center;
+      justify-content: end;
+    }
+    a, button, p, span {
+      text-decoration: none;
+      color: rgb(70, 70, 70);
+      font-size: 1rem;
+    }
+
+    button {
+      cursor: pointer;
+      background-color: unset;
+      border: 1px solid #ddd; /* 按鈕邊框 */
+      border-radius: 8px;
+      padding: 5px 10px; /* 按鈕內邊距 */
+    }
+
+    button.light {
+      color: rgb(93, 93, 93);
+      font-size: 1rem;
+    }
+
+    .linka, .link a {
+      color: #506c97;
+    }
+
+    .flex {
+      display: flex;
+    }
+
+    .flex-wrap {
+      flex-wrap: wrap;
+    }
+
+    .item-center {
+      align-items: center;
+    }
+
+    .between {
+      justify-content: space-between;
+    }
+    /* 隱藏編輯圖標 */
+    .edit {
+      display: none; /* 默認隱藏 */
+      cursor: pointer;
+      margin-top: 2px;
+      margin-left: 5px;
+    }
+
+    /* 編輯圖標顯示樣式 */
+    .show-edit .edit {
+      display: inline; /* 顯示編輯圖標 */
+    }
+
+    /* 主內容區 */
+    #_main_content {
+      margin-left: 200px; /* 側邊欄的寬度 */
+      margin-top: 50px; /* 顯示頂部選單 */
+      padding: 15px;
+      flex: 1;
+      background-color: white;
+      height: calc(100vh - 50px); /* 高度為整個視口高度減去頂部選單高度 */
+      overflow-y: auto;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    
+    #_main_content .container {
+      width: 100%;
+      margin: 0;
+      border-radius: 10px 10px 0 0;
+      background-color: white;
+      padding: 15px 15px 80px;
+    }
+     
+    .main-content-wrapper {
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .main-content-wrapper ._left, 
+    .main-content-wrapper ._right {
+      flex: 1;
+      margin: 0 10px;
+    }
+
+
+
+    /* 內容區域樣式 */
+    .space {
+      padding: 20px 15px;
+      border-bottom: 1px solid rgb(215, 215, 215);
+    }
+    
+    .content_box {
+      margin: 15px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .content_box .title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      border-bottom: 1px solid rgb(215, 215, 215);
+      padding-bottom: 10px;
+    }
+
+    
+    .content_box .title h2 {
+      font-size: 1.2rem;
+      color: #977245;
+    }
+    
+    .content_box .title select {
+      font-size: 1.2rem;
+      padding: 5px 10px;
+      border-radius: 4px;
+      border: 1px solid rgb(200, 200, 200);
+    }
+
+    .content_box .title .edit {
+      cursor: pointer;
+      margin-top: 2px;
+      margin-left: 5px;
+      display: flex;
+      justify-items: center;
+      align-items: center;
+    }
+    
+    .content_box .content {
+      padding: 20px 25px;
+    }
+    
+    .content_box .content span {
+      word-break: break-all;
+    }
+    
+    .content_box .content .box {
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .content_box .content .box:last-child {
+      margin-bottom: unset;
+    }
+    
+    .content_box .content .box span, .content_box .content .box a {
+      display: inline-block;
+    }
+    
+    .content_box .content .title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    .content_box .content.img_content .box .flex_left {
+      width: 60px; /* 設定更小的寬度 */
+      height: 40px; /* 設定更小的高度 */
+      margin-right: 10px; /* 調整邊距 */
+      overflow: hidden; /* 隱藏超出容器的圖片部分 */
+    }
+    
+    .content_box .content.img_content .box .flex_left img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* 確保圖片不會變形 */
+    }
+    .content_box .content.img_content .box .flex_right .tag p {
+      font-size: 0.8rem;
+      display: inline-flex;
+      padding: 4px 8px;
+      background-color: rgb(213, 181, 142);
+    }
+    
+    .content_box .content.img_content .box .flex_right .title {
+      margin-top: 5px;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    
+    .content_box .content.img_content .box .flex_right .option {
+      margin: 5px 0;
+    }
+    
+    .content_box .content.img_content .box .flex_right .option span {
+      display: inline-block;
+      margin: unset;
+    }
+    
+    .content_box .content.img_content .box .flex_right .light {
+      color: rgb(94, 94, 94);
+    }
+    
+    .box_indent .price {
+      letter-spacing: 1px;
+    }
+
+    /* 表格樣式 */
+    .row {
+      display: flex;
+      justify-content: left;
+      border-bottom: 1px solid rgb(215, 215, 215);
+    }
+
+    .row.title {
+      font-weight: 700;
+    }
+
+    .row.title p {
+      color: #606060;
+    }
+
+    .row .th, .row .td {
+      padding: 10px 5px;
+      display: flex;
+      align-items: center;
+    }
+
+    .row .th {
+      font-weight: 600;
+    }
+
+    .row .td {
+      font-size: 0.8rem;
+    }
+
+    .row .td.center {
+      text-align: center;
+    }
+
+    .row .td a {
+      color: #506c97;
+    }
+
+    .row .td a:hover {
+      text-decoration: underline;
+    }
+
+    /* 排版樣式 */
+    .page-wrapper {
+      width: calc(100% - 30px);
+      margin: 15px auto 0 auto;
+      padding: 15px;
+      border-radius: 10px;
+      background-color: white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .page-wrapper .pagination {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+    }
+    
+    .page-wrapper .pagination button {
+      border: 1px solid #ddd;
+      background-color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      margin: 0 5px;
+      font-size: 0.8rem;
+    }
+
+    .page-wrapper .pagination button:hover {
+      background-color: #f0f0f0;
+    }
+    
+    .page-wrapper .pagination button.disabled {
+      color: #ccc;
+      border: 1px solid #ddd;
+      cursor: not-allowed;
+    }
+    /* 調整產品框樣式 */
+    .product-box {
+      margin-bottom: 20px; /* 增加產品框的下邊距 */
+    }
+    
+    /* 調整產品標題和細節部分的排列方式 */
+    .product-header {
+      display: flex;
+      align-items: flex-start; /* 將子元素對齊到起始位置 */
+    }
+    
+    /* 調整產品圖片樣式 */
+    .product-image {
+      margin-right: 15px; /* 產品圖片與其他內容之間的間距 */
+      max-width: 50px; /* 最大寬度為 50 像素 */
+      max-height: 50px; /* 最大高度為 50 像素 */
+      object-fit: cover; /* 保持圖片比例，不變形 */
+      border: 1px solid #ddd; /* 圖片邊框 */
+      border-radius: 4px; /* 圓角邊框 */
+
+    }
+    
+    .product-image img {
+      max-width: 70px; /* 設定圖片最大寬度 */
+      height: auto; /* 自動調整高度以保持比例 */
+      object-fit: cover; /* 確保圖片不會變形 */
+      border-radius: 4px; /* 圓角邊框，可選 */
+    }
+    
+    /* 調整產品信息樣式 */
+    .product-info {
+      flex: 1;
+    }
+    
+    /* 產品名稱樣式 */
+    .product-info h3 {
+      margin: 0;
+      margin-bottom: 5px; /* 將產品名稱與價格信息的間距調整 */
+    }
+    
+    /* 調整產品細節樣式 */
+    .product-details {
+      margin-top: 10px; /* 產品名稱與價格信息之間的間距 */
+    }
+    
+    .product-details p {
+      margin: 0;
+      font-size: 1rem; /* 調整字體大小 */
+      color: rgb(70, 70, 70); /* 調整字體顏色 */
+    }
+    #_product_detail #_tag_pic_content .content .img_box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      overflow-y: scroll;
+      max-height: 400px;
+      margin-top: 20px;
+    }
+
+    #_product_detail #_tag_pic_content .content .img_box .items {
+      width: calc((100% - 60px) / 3);
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      #_product_detail #_tag_pic_content .content .img_box .items {
+        width: calc((100% - 30px) / 2);
+      }
+    }
+
+    #_product_detail #_tag_pic_content .content .img_box .items img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    #_product_detail #_tag_pic_content .content .img_box .items .btn button.delete {
+      background-color: rgb(204, 75, 75);
+      color: white;
+    }
+    
+    #_product_detail #_tag_pic_content .content .img_box .items .btn {
+      margin-top: 15px;
+    }
+    
+    #_product_detail #_tag_pic_content .content .img_box .items .btn button {
+      border: 1px solid rgb(215, 215, 215);
+      border-radius: 3px;
+      line-height: 15px;
+    }
+    
+    #_product_detail #_tag_pic_content .content .add_img_box {
+      margin-top: 50px;
+      border: 2px dashed rgb(215, 215, 215);
+      text-align: center;
+      padding: 50px 15px;
+    }
+    
+    #_product_detail #_tag_pic_content .content .add_img_box button {
+      margin-top: 15px;
+    }
+    /* 全頁背景遮罩 */
+    .modal {
+      display: none; /* 隱藏彈窗，初始狀態為隱藏 */
+      position: fixed; /* 固定定位，確保在其他內容上層 */
+      z-index: 1000; /* 確保在其他內容上層 */
+      left: 0; /* 靠左對齊 */
+      top: 0; /* 靠上對齊 */
+      width: 100%; /* 寬度擴展至全螢幕 */
+      height: 100%; /* 高度擴展至全螢幕 */
+      background: rgba(0, 0, 0, 0.5); /* 半透明黑色背景 */
+    }
+    
+    /* 彈窗內容 */
+    .modal-content {
+      position: relative; /* 相對定位 */
+      margin: 15% auto; /* 垂直居中，並有一些距離 */
+      padding: 20px; /* 內邊距 */
+      width: 80%; /* 設置彈窗寬度 */
+      max-width: 600px; /* 設置彈窗最大寬度 */
+      background: #fff; /* 彈窗背景色 */
+      border-radius: 8px; /* 彈窗圓角 */
+    }
+    
+    /* 彈窗的開關按鈕 */
+    .close {
+      position: absolute; /* 絕對定位 */
+      top: 10px; /* 上邊距 */
+      right: 10px; /* 右邊距 */
+      color: #aaa; /* 按鈕顏色 */
+      font-size: 28px; /* 按鈕文字大小 */
+      font-weight: bold; /* 按鈕文字粗體 */
+      cursor: pointer; /* 鼠標指針 */
+    }
+    
+    .close:hover, .close:focus {
+      color: black; /* 滑鼠懸停或聚焦時顏色 */
+      text-decoration: none; /* 去掉下劃線 */
+      cursor: pointer; /* 滑鼠指針 */
+    }
+    
+    /* 彈窗內容的排版 */
+    .box {
+      margin-bottom: 15px; /* 底部邊距 */
+    }
+    
+    .flex {
+      display: flex; /* 設置為彈性布局 */
+      justify-content: space-between; /* 空間均勻分配 */
+      align-items: center; /* 垂直居中 */
+    }
+    
+    .flex_left {
+      flex: 1; /* 左邊占據1部分空間 */
+      white-space: nowrap; /* 防止換行 */
+    }
+    
+    .flex_right {
+      flex: 1; /* 右邊占據1部分空間 */
+      /* 移除 margin-left 調整 */
+      white-space: nowrap; /* 防止換行 */
+    }
+    
+    input[type="text"] {
+      width: 100%; /* 輸入框寬度為100% */
+      padding: 8px; /* 內邊距 */
+      border: 1px solid #ccc; /* 邊框 */
+      border-radius: 4px; /* 圓角 */
+    }
+    
+    /* 遮罩層 */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none; /* 預設隱藏 */
+      z-index: 1000; /* 確保在最上層 */
+    }
+  </style>
+</head>
+<body>
+  <div id="_top_menu">
+    <div class="_container">
+      <span class="admin-info">{{ session['username'] if session.get('username') else '管理者帳號' }}</span>
+      <a href="{{ url_for('manager_logout') }}">
+        <button class="logout-btn">登出</button>
+      </a>
+    </div>
+  </div>
+
+  <div class="flex overflow-y-hidden">
+    <!-- common menu -->
+    <div id="_main_menu" class="_main_menu">
+      <ul>
+          <li><a href="{{ url_for('home') }}">首頁</a></li>
+          <li><a href="{{ url_for('orders') }}">訂單管理</a></li>
+          <li><a href="{{ url_for('products') }}"">商品設定</a></li>
+      </ul>
+    </div>
+
+    <!-- content -->
+    <div id="_main_content" class="y-scroll">
+      <div id="_navigation"></div>
+      <main class="pb-15 flex mx-10">
+        <div class="_left">
+          <!-- 產品資料編輯 -->
+          <div id="_product_info" class="content_box border">
+            <div class="title">
+              <h2>產品資訊</h2>
+              <span class="edit" onclick="openModal('editProductModal')">✎</span>
+            </div>
+            <div class="content">
+              <div class="box">
+                <div class="flex">
+                  <div class="flex_left">
+                    <p>商品名稱:</p>
+                  </div>
+                  <div class="flex_right">
+                    <p>{{ product.ProductName }}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="box">
+                <div class="flex">
+                  <div class="flex_left">
+                    <p>備註:</p>
+                  </div>
+                  <div class="flex_right">
+                    <p>{{ product.Notes }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 編輯商品名稱和備註彈窗 -->
+          <div id="editProductModal" class="modal hidden">
+            <div class="modal-content">
+              <div class="box">
+                <form action="{{ url_for('update_product', product_id=product.ProductID) }}" method="POST">
+                  <div class="flex">
+                    <div class="flex_left">
+                      <label for="productNameEdit">商品名稱:</label>
+                    </div>
+                    <div class="flex_right">
+                      <input type="text" id="productNameEdit" name="ProductName" value="{{ product.ProductName }}">
+                    </div>
+                  </div>
+                  <div class="box">
+                    <div class="flex">
+                      <div class="flex_left">
+                        <label for="productNotesEdit">備註:</label>
+                      </div>
+                      <div class="flex_right">
+                        <input type="text" id="productNotesEdit" name="Notes" value="{{ product.Notes }}">
+                      </div>
+                    </div>
+                  </div>
+                  <button type="submit">儲存</button>
+                  <button type="button" onclick="closeModal('editProductModal')">取消</button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- 價格與數量 -->
+          <div id="_price_quantity" class="content_box border">
+            <div class="title">
+              <h2>價格與數量</h2>
+              <span class="edit" onclick="openModal('editPriceQuantity')">✎</span>
+            </div>
+            <div class="content">
+              <div class="box">
+                <div class="flex">
+                  <div class="flex_left">
+                    <p>價格:</p>
+                  </div>
+                  <div class="flex_right">
+                    <p>{{ product.Price }}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="box">
+                <div class="flex">
+                  <div class="flex_left">
+                    <p>庫存數量:</p>
+                  </div>
+                  <div class="flex_right">
+                    <p>{{ product.Quantity }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 編輯價格和庫存數量彈窗 -->
+          <div id="editPriceQuantity" class="modal hidden">
+            <div class="modal-content">
+              <div class="box">
+                <form action="{{ url_for('update_product', product_id=product.ProductID) }}" method="POST">
+                  <div class="flex">
+                    <div class="flex_left">
+                      <label for="price_edit">價格:</label>
+                    </div>
+                    <div class="flex_right">
+                      <input type="text" id="price_edit" name="Price" value="{{ product.Price }}">
+                    </div>
+                  </div>
+                  <div class="box">
+                    <div class="flex">
+                      <div class="flex_left">
+                        <label for="quantity_edit">庫存數量:</label>
+                      </div>
+                      <div class="flex_right">
+                        <input type="text" id="quantity_edit" name="Quantity" value="{{ product.Quantity }}">
+                      </div>
+                    </div>
+                  </div>
+                  <button type="submit">儲存</button>
+                  <button type="button" onclick="closeModal('editPriceQuantity')">取消</button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- 成分與產地 -->
+          <div id="_ingredients_origin" class="content_box border">
+            <div class="title">
+              <h2>成分與產地</h2>
+              <span class="edit" onclick="openModal('editIngredientsOrigin')">✎</span>
+            </div>
+            <div class="content">
+              <div class="box">
+                <div class="flex">
+                  <div class="flex_left">
+                    <p>成分:</p>
+                  </div>
+                  <div class="flex_right">
+                    <p>{{ product.Ingredients }}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="box">
+                <div class="flex">
+                  <div class="flex_left">
+                    <p>產地:</p>
+                  </div>
+                  <div class="flex_right">
+                    <p>{{ product.Origin }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 編輯成分和產地彈窗 -->
+          <div id="editIngredientsOrigin" class="modal hidden">
+            <div class="modal-content">
+              <div class="box">
+                <form action="{{ url_for('update_product', product_id=product.ProductID) }}" method="POST">
+                  <div class="flex">
+                    <div class="flex_left">
+                      <label for="ingredients_edit">成分:</label>
+                    </div>
+                    <div class="flex_right">
+                      <input type="text" id="ingredients_edit" name="Ingredients" value="{{ product.Ingredients }}">
+                    </div>
+                  </div>
+                  <div class="box">
+                    <div class="flex">
+                      <div class="flex_left">
+                        <label for="origin_edit">產地:</label>
+                      </div>
+                      <div class="flex_right">
+                        <input type="text" id="origin_edit" name="Origin" value="{{ product.Origin }}">
+                      </div>
+                    </div>
+                  </div>
+                  <button type="submit">儲存</button>
+                  <button type="button" onclick="closeModal('editIngredientsOrigin')">取消</button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- 主要圖片 -->
+          <div id="_product_images" class="content_box border">
+            <div class="title">
+              <h2>產品圖片</h2>
+            </div>
+            <div class="content">
+              <div id="_tag_pic_content">
+                <div class="content">
+                  <div class="img_box">
+                    {% for image in product.images %}
+                    <div class="items">
+                      <!-- 顯示圖片 -->
+                      <img src="{{ url_for('static', filename='uploads/' + image.ImagePath) }}" alt="產品圖片">
+                      <div class="btn">
+                        <form action="{{ url_for('delete_image', image_id=image.ImageID) }}" method="post" style="display: inline;">
+                          <button type="submit" class="delete">刪除</button>
+                        </form>
+                      </div>
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+                <div class="product-upload">
+                  <form action="{{ url_for('upload_image', product_id=product.ProductID) }}" method="POST" enctype="multipart/form-data">
+                    <label for="productImageUpload">新增圖片：</label>
+                    <div class="product-upload-btn">
+                      <input type="file" id="productImageUpload" name="image">
+                      <button type="submit">上傳</button>
+                    </div>
+                        <div id="imagePreviewContainer">
+                            <img id="imagePreview" src="" alt="圖片預覽" style="display:none;">
+                        </div>
+                    </form>
+                </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+    <script>
+      function showSuccessMessage() {
+        const modal = document.getElementById('successModal');
+        modal.style.display = 'block';
+        setTimeout(() => {
+          modal.style.display = 'none';
+        }, 3000); // 3秒後自動隱藏
+      }  
+        function openModal(modalId) {
+          document.getElementById(modalId).style.display = 'block';
+          document.getElementById('overlay').style.display = 'block';
+        }
+        
+        function closeModal(modalId) {
+          document.getElementById(modalId).style.display = 'none';
+          document.getElementById('overlay').style.display = 'none';
+        }
+    
+        // 確保點擊遮罩層時彈窗會關閉
+        document.querySelector('.overlay').addEventListener('click', () => {
+            document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none');
+            document.querySelector('.overlay').style.display = 'none';
+        });
+    
+        function saveChanges() {
+            // 儲存更改的邏輯
+            // 這裡應該包含 AJAX 調用或表單提交的邏輯
+            alert('更改已儲存！');
+            closeModal('editProductModal'); // 關閉特定的彈窗
+        }
+    
+        function saveProductChanges() {
+            const productName = document.getElementById('productNameEdit').value;
+            const productNotes = document.getElementById('productNotesEdit').value;
+            // Add AJAX call or form submission logic here
+            alert('產品更改已儲存！');
+            closeModal('editProductModal'); // 關閉特定的彈窗
+        }
+    
+        function savePriceQuantityChanges() {
+            const price = document.getElementById('price_edit').value;
+            const quantity = document.getElementById('quantity_edit').value;
+            // Add AJAX call or form submission logic here
+            alert('價格和數量已儲存！');
+            closeModal('editPriceQuantity'); // 關閉特定的彈窗
+        }
+    
+        function saveIngredientsOriginChanges() {
+            const ingredients = document.getElementById('ingredients_edit').value;
+            const origin = document.getElementById('origin_edit').value;
+            // Add AJAX call or form submission logic here
+            alert('配料和來源已儲存！');
+            closeModal('editIngredientsOrigin'); // 關閉特定的彈窗
+        }
+        function previewImage(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.getElementById('imagePreview');
+                img.src = e.target.result;
+                img.style.display = 'block'; // 顯示圖片預覽
+            };
+            reader.readAsDataURL(file);
+        }
+    </script>
+
+</body>
+</html>

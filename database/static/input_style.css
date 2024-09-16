@@ -1,0 +1,90 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+header {
+    background-color: #d5cec7;
+    height: 80px;
+    width: 100%;
+    position: fixed;
+    z-index: 999; /* 使選單位於最上層 */
+}
+header.transparent {
+    background-color: rgba(213, 206, 199, 0.8);
+}
+header li {
+    display:inline;
+    margin-right:4vw;
+}
+header ul {
+    position: absolute;
+    right: 5vw;
+    top: 0;
+    line-height: 80px;
+}
+h2 {
+    color: white;
+    position: absolute;
+    left: 120px;
+    top: 0;
+    line-height: 80px;
+    background-image: url(https://i.imgur.com/PJB7vHH.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 210px;
+    text-indent: -9999px;
+}
+h3 {
+    text-align: center;
+}
+#content {
+    text-align: center;
+}
+header a {
+    color:white;
+    text-decoration:none;
+}
+header a:hover {
+    text-decoration: underline;
+}
+.new {
+    background-color: antiquewhite;
+    color: white;
+    height: 95vh;
+    background-image: url("https://i.imgur.com/PJB7vHH.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+form {
+    text-align: center;
+    margin: 0 auto;
+    width: 50%;
+}
+.menu {
+    display: none;
+}
+/* 響應式設計語法 */
+@media screen and (max-width: 768px) {
+    header ul {
+        display: none;
+    }
+    header h1 {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .new h2 {
+        font-size: 40px;
+    }
+    .menu {
+        display: block;
+        background-color: transparent;
+        color: white;
+        font-size: 35px;
+        position: absolute;
+        top: 15px;
+        left: 20px;
+        border: none;
+        cursor: pointer;
+    }
+}

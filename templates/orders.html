@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>訂單管理</title>
+  <style>
+    /* 主選單樣式 */
+    #_main_menu {
+      width: 200px;
+      background-color: #40698b;
+      height: 100vh; /* 讓側邊欄覆蓋整個視口高度 */
+      box-shadow: 2px 0px 8px 0 rgba(0, 0, 0, 0.04);
+      position: fixed;
+      top: 0; /* 從視口的最上面開始 */
+      left: 0;
+      z-index: 1000; /* 確保側邊欄層級高於頂部選單 */
+    }
+    @media (max-width: 1024px) {
+      #_main_menu {
+        display: none;
+        left: -100%;
+      }
+    }
+
+    #_main_menu ul {
+      margin: 0 15px;
+      padding-top: 30px;
+      list-style-type: none;
+    }
+
+    #_main_menu ul li {
+      padding: 0 15px;
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+    }
+
+    #_main_menu ul li a {
+      color: white;
+      display: block;
+      padding: 10px;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+
+    #_main_menu ul li a:hover {
+      background-color: #305c7c;
+    }
+    /* 頂部選單 */
+    #_top_menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 500;
+    }
+
+    #_top_menu ._container {
+      width: 100%;
+      min-height: 50px;
+      background-color: white;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    @media (min-width: 1024px) {
+      #_top_menu ._container {
+        padding-left: 200px;
+      }
+    }
+
+    #_top_menu ._container .content {
+      padding: 0 15px;
+      min-height: 50px;
+      box-shadow: 10px 2px 8px 0 rgba(0, 0, 0, 0.06);
+      margin-left: auto;
+      align-items: center;
+      justify-content: end;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    a,
+    button,
+    p,
+    span {
+      text-decoration: none;
+      color: rgb(70, 70, 70);
+      font-size: 1rem;
+    }
+    
+    button {
+      cursor: pointer;
+    }
+    
+    html,
+    body {
+      background-color: rgb(250, 250, 250);
+      color: rgb(70, 70, 70);
+      font-family: "Microsoft JhengHei";
+      font-size: 1rem;
+    }
+    
+    img {
+      width: 100%;
+      display: block;
+    }
+    
+    button {
+      cursor: pointer;
+      background-color: unset;
+      border: 1px solid #ddd; /* 按鈕邊框 */
+      border-radius: 8px;
+      padding: 5px 10px; /* 按鈕內邊距 */
+    }
+    
+    button.light {
+      color: rgb(93, 93, 93);
+      font-size: 1rem;
+    }
+
+    
+    .linka,
+    .link a {
+      color: #506c97;
+    }
+    
+    .flex {
+      display: flex;
+    }
+    
+    ._main_inner {
+      position: absolute;
+      width: 100%;
+    }
+    
+    .flex-warp {
+      flex-wrap: wrap;
+    }
+    
+    .item-center {
+      align-items: center;
+    }
+    
+    .between {
+      justify-content: space-between;
+    }
+    
+    ._left,
+    ._right {
+      width: 50%;
+    }
+    
+    .red-color {
+      color: #d72020;
+    }
+    
+    .wadj {
+      flex-grow: 1;
+    }
+    
+    .w10 {
+      width: 10%;
+    }
+    
+    .w15 {
+      width: 15%;
+    }
+    
+    .w20 {
+      width: 20%;
+    }
+    
+    .w30 {
+      width: 30%;
+    }
+    
+    .w-full {
+      width: 100%;
+    }
+    
+    .pt-5 {
+      padding-top: 5px;
+    }
+    
+    .pt-20 {
+      padding-top: 20px;
+    }
+    
+    .pr-5 {
+      padding-right: 5px;
+    }
+    
+    .pr-10 {
+      padding-right: 10px;
+    }
+    
+    .pb-15 {
+      padding-bottom: 15px;
+    }
+    
+    .pl-5 {
+      padding-left: 5px;
+    }
+    
+    .pl-10 {
+      padding-left: 10px;
+    }
+    
+    .p-10 {
+      padding: 10px;
+    }
+    
+    .ml-5 {
+      margin-left: 5px;
+    }
+    
+    .mr-5 {
+      margin-right: 5px;
+    }
+    
+    .mr-10 {
+      margin-right: 10px;
+    }
+    
+    .m-15 {
+      margin: 15px;
+    }
+    
+    .mt-5 {
+      margin-top: 5px;
+    }
+    
+    .mt-20 {
+      margin-top: 20px;
+    }
+    
+    .my-10 {
+      margin-right: 10px;
+      margin-left: 10px;
+    }
+    
+    .mx-10 {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    
+    .text-center {
+      align-items: center;
+    }
+    
+    .border {
+      border: 1px solid rgb(215, 215, 215);
+    }
+    
+    .status_green {
+      background-color: #6fb96f;
+      color: white;
+    }
+    
+    .status_white {
+      border: 1px solid rgb(215, 215, 215);
+      background-color: #ffffff;
+    }
+    
+    .status_yellow {
+      background-color: #d6a863;
+      color: white;
+    }
+    
+    .status_gray {
+      background-color: #c3c3c3;
+    }
+    
+    .status_red {
+      background-color: #e46868;
+      color: white;
+    }
+    
+    .status_blue {
+      background-color: #317eae;
+      color: white;
+    }
+    
+    .status_warning {
+      background-color: #fff201;
+      color: rgb(235, 33, 33);
+    }
+    
+    ._status {
+      padding: 5px 10px;
+      border-radius: 6px;
+    }
+    
+    ._status_bg {
+      text-align: center;
+      padding: 4px 8px;
+    }
+    
+    #main .container {
+      margin: 20px;
+      padding-top: 20px;
+      padding-right: 10px;
+      padding-left: 10px;
+    }
+    
+    .content_box {
+      margin: 20px;
+      padding: 20px;
+      background-color: white;
+    }
+    
+    .overflow-y-hidden {
+      overflow-y: hidden;
+    }
+    .overflow-y-hidden .y-scroll {
+      overflow-y: auto;
+    }
+    
+    .overflow-x-hidden {
+      overflow-x: hidden;
+    }
+    .overflow-x-hidden .x-scroll {
+      overflow-x: auto;
+    }
+    #_main_content {
+      margin-left: 200px; /* 側邊欄的寬度 */
+      margin-top: 50px; /* 顯示頂部選單 */
+      padding: 15px;
+      flex: 1;
+      background-color: white;
+      height: calc(100vh - 50px); /* 高度為整個視口高度減去頂部選單高度 */
+      overflow-y: auto;
+    }
+    
+    #_main_content .container {
+      width: calc(100% - 30px);
+      margin: 15px auto 0 auto;
+      border-radius: 10px 10px 0 0;
+      background-color: white;
+      padding: 15px 15px 80px;
+    }
+    
+    #_navigation ._navigation {
+      display: flex;
+      align-items: center;
+      padding: 0 30px;
+      border-bottom: 1px solid rgb(215, 215, 215);
+      background-color: white;
+      height: 60px;
+    }
+    
+    #top_table_info {
+      display: flex;
+      align-items: center;
+      padding: 0 15px;
+    }
+    #top_table_info .logout-btn {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 16px;
+    }
+    #top_table_info #order_controller {
+      display: flex;
+      justify-content: end;
+    }
+    #top_table_info #order_controller label {
+      white-space: nowrap;
+      font-size: 1.1rem;
+    }
+    #top_table_info #search .content {
+      width: calc(100% - 180px);
+    }
+    #top_table_info #search .content button {
+      white-space: nowrap;
+      background-color: white;
+      border-radius: 0;
+      border-left: unset !important;
+    }
+    #top_table_info input {
+      outline: unset;
+      border-left: unset !important;
+      padding-right: 15px;
+      padding-left: 15px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    #top_table_info select {
+      cursor: pointer;
+      padding-left: 8px;
+      padding-right: 5px;
+    }
+    #top_table_info select,
+    #top_table_info input,
+    #top_table_info button {
+      height: 42px;
+      outline: unset;
+      border: 1px solid rgb(215, 215, 215);
+      font-size: 1rem;
+    }
+    #top_table_info select option,
+    #top_table_info input option,
+    #top_table_info button option {
+      border: unset;
+      padding: 0;
+    }
+    
+    .row {
+      display: flex;
+      justify-content: left;
+      border-bottom: 1px solid rgb(215, 215, 215);
+    }
+    .row.title {
+      font-weight: 700;
+    }
+    .row.title p {
+      color: #606060;
+    }
+    .row .th,
+    .row .td {
+      padding: 10px 5px;
+      display: flex;
+      align-items: center;
+    }
+    .row .th.center,
+    .row .td.center {
+      justify-content: center;
+    }
+    .row .th:first-child,
+    .row .td:first-child {
+      padding-left: 15px;
+    }
+    .row .th:last-child,
+    .row .td:last-child {
+      padding-right: 15px;
+    }
+    
+    ._scroll_container {
+      overflow-x: auto;
+      border-radius: 6px 6px 0 0;
+      display: flex;
+      flex-flow: column nowrap;
+      font-size: 85%;
+      background-color: white;
+      width: 100%;
+    }
+    ._scroll_container ._scroll {
+      width: 100%;
+      min-width: 1400px;
+      margin-bottom: 30px;
+      padding: 0 15px;
+    }
+    
+    #pagination {
+      border-radius: 8px 8px 0 0;
+      max-width: 1400px;
+      width: calc(100% - 30px);
+      font-size: 1em;
+      margin: 15px;
+      text-align: center;
+    }
+    #pagination ul {
+      list-style-type: none;
+    }
+    #pagination ul li {
+      cursor: pointer;
+      margin: 5px;
+      display: inline-flex;
+    }
+    #pagination ul li.current {
+      color: #3974a5;
+      font-weight: bold;
+    }
+    /* 訂單狀態 */
+    .status_pending {
+      background-color: #d6a863; /* 黃色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    
+    .status_handling {
+      background-color: #6fb96f; /* 綠色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    
+    .status_complete {
+      background-color: #ffffff; /* 白色 */
+      color: #000000; /* 黑色文字 */
+      border: 1px solid rgb(215, 215, 215); /* 白色邊框 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    
+    .status_cancel {
+      background-color: #c3c3c3; /* 灰色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    
+    .status_return {
+      background-color: #317eae; /* 藍色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    
+    /* 付款狀態 */
+    .status_unpaid {
+      background-color: #d6a863; /* 黃色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    
+    .status_paid {
+      background-color: #6fb96f; /* 綠色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    
+    .status_refund {
+      background-color: #317eae; /* 藍色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    /* 配送狀態 */
+    .status_handling {
+      background-color: #6fb96f; /* 綠色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    
+    .status_pending {
+      background-color: #d6a863; /* 黃色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    
+    .status_shipped {
+      background-color: #4a90e2; /* 藍色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    
+    .status_arrived {
+      background-color: #2c3e50; /* 深灰色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    
+    .status_return {
+      background-color: #e74c3c; /* 紅色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    
+    .status_cancel {
+      background-color: #95a5a6; /* 灰色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+
+    </style>
+</head>
+<body>
+  <div id="_top_menu">
+    <div class="_container">
+      <span class="admin-info">{{ session['username'] if session.get('username') else '管理者帳號' }}</span>
+      <a href="{{ url_for('manager_logout') }}">
+        <button class="logout-btn">登出</button>
+      </a>
+    </div>
+  </div>
+  <div class="flex overflow-y-hidden">
+    <div id="main">
+      <div id="_main_menu">
+        <ul>
+          <li><a href="{{ url_for('home') }}">首頁</a></li>
+          <li><a href="{{ url_for('orders') }}">訂單管理</a></li>
+          <li><a href="{{ url_for('products') }}"">商品設定</a></li>
+        </ul>
+      </div>
+      <div id="_main_content" class="y-scroll">
+        <div class="_main_inner">
+          <div id="_navigation"></div>
+          <main class="container border">
+            <section id="top_table_info" class="flex">
+              <div id="search" class="flex text-center w-full">
+                <div class="flex content">
+                  <select id="search_target">
+                    <option value="id">搜尋訂單號</option>
+                    <option value="date">搜尋訂單日期</option>
+                    <option value="name">搜尋名字</option>
+                  </select>
+                  <input id="search_order" type="text" placeholder="..." />
+                  <input id="search_date" type="date" style="display: none;" />
+                  <button id="search_btn" class="pr-10 pl-10">搜尋</button>
+                </div>
+              </div>
+              <div id="order_controller">
+                <div class="flex text-center">
+                  <label for="showListOption" class="mr-10">顯示</label>
+                  <select name="showList" id="showListOption"></select>
+                </div>
+              </div>
+            </section>
+            <section class="mt-20">
+              <div id="orderContent" class="border _scroll_container">
+                <div class="_scroll">
+                  <div class="row title">
+                    <div class="th w10"><p>訂單號碼</p></div>
+                    <div class="th w10"><p>訂單日期</p></div>
+                    <div class="th w10"><p>訂單狀態</p></div>
+                    <div class="th w10"><p>付款狀態</p></div>
+                    <div class="th w10"><p>送貨狀態</p></div>
+                    <div class="th w10"><p>訂購人</p></div>
+                    <div class="th w10"><p>合計</p></div>
+                  </div>
+                  <div class="items">
+                    {% for order in orders %}
+                    <div class="row">
+                        <div class="td w10"><a href="{{ url_for('orderDetail', order_id=order.OrderID) }}">{{ order.OrderID }}</a></div>
+                        <div class="td w10"><p>{{ order.OrderDate }}</p></div>
+                        <div class="td w10">
+                            <p class="{% if order.OrderStatusID == 1 %}status_pending{% elif order.OrderStatusID == 2 %}status_handling{% elif order.OrderStatusID == 3 %}status_complete{% elif order.OrderStatusID == 4 %}status_cancel{% endif %}">
+                                {% if order.OrderStatusID == 1 %}待確定
+                                {% elif order.OrderStatusID == 2 %}處理中
+                                {% elif order.OrderStatusID == 3 %}已完成
+                                {% elif order.OrderStatusID == 4 %}已取消
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="td w10">
+                            <p class="{% if order.PaymentStatusID == 1 %}status_unpaid{% elif order.PaymentStatusID == 2 %}status_paid{% elif order.PaymentStatusID == 3 %}status_cancel{% elif order.PaymentStatusID == 4 %}status_refund{% endif %}">
+                                {% if order.PaymentStatusID == 1 %}未付款
+                                {% elif order.PaymentStatusID == 2 %}已付款
+                                {% elif order.PaymentStatusID == 3 %}已取消
+                                {% elif order.PaymentStatusID == 4 %}已退款
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="td w10">
+                            <p class="{% if order.DeliveryStatusID == 1 %}status_handling{% elif order.DeliveryStatusID == 2 %}status_pending{% elif order.DeliveryStatusID == 3 %}status_shipped{% elif order.DeliveryStatusID == 4 %}status_arrived{% elif order.DeliveryStatusID == 5 %}status_return{% elif order.DeliveryStatusID == 6 %}status_cancel{% endif %}">
+                                {% if order.DeliveryStatusID == 1 %}備貨中
+                                {% elif order.DeliveryStatusID == 2 %}處理中
+                                {% elif order.DeliveryStatusID == 3 %}已發貨
+                                {% elif order.DeliveryStatusID == 4 %}已送達
+                                {% elif order.DeliveryStatusID == 5 %}已退回
+                                {% elif order.DeliveryStatusID == 6 %}已取消
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="td w10"><p>{{ order.CustomerName }}</p></div>
+                        <div class="td w10"><p>{{ order.TotalPrice }}</p></div>
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+              <div class="pagination">
+                <ul class="pagination">
+                    {% if pagination %}
+                        {% for page_num in pagination.iter_pages() %}
+                            <li><a href="{{ url_for('products', page=page_num) }}">{{ page_num }}</a></li>
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+              </div>
+            </section>
+          </main>
+        </div>
+      </div>
+    </div>
+  </div>
+    <script type="module">
+        function order() {
+          const searchBtn = document.getElementById('search_btn');
+          const searchTarget = document.getElementById('search_target');
+          const searchOrder = document.getElementById('search_order');
+          const searchDate = document.getElementById('search_date');
+          const orderContent = document.querySelector('.items');
+    
+        function performSearch() {
+          orderContent.innerHTML = '<p>正在載入資料...</p>'; 
+          const targetValue = searchTarget.value;
+          let orderValue = '';
+          if (targetValue === 'date') {
+            orderValue = searchDate.value;
+          } else {
+            orderValue = searchOrder.value;
+          }
+        
+          fetch('/search_orders', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              target: targetValue,
+              value: orderValue
+            })
+          })
+          .then(response => response.json())
+          .then(data => {
+            orderContent.innerHTML = '';
+        
+            data.forEach(order => {
+              const newRow = document.createElement('div');
+              newRow.classList.add('row');
+        
+                newRow.innerHTML = `
+                  <div class="td w10"><p>${order.OrderID}</p></div>
+                  <div class="td w10"><p>${order.OrderDate}</p></div>
+                  <div class="td w10"><p class="status ${order.StatusClass}">${order.Status}</p></div>
+                  <div class="td w10"><p class="status ${order.PaymentStatusClass}">${order.PaymentStatus}</p></div>
+                  <div class="td w10"><p class="status ${order.DeliveryStatusClass}">${order.DeliveryStatus}</p></div>
+                  <div class="td w10"><p>${order.CustomerName}</p></div>
+                  <div class="td w10"><p>${order.TotalPrice}</p></div>
+                `;
+        
+              orderContent.appendChild(newRow);
+            });
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('搜尋時發生錯誤，請稍後再試。');
+          });
+        }
+
+          function updateSearchInputVisibility() {
+            const targetValue = searchTarget.value;
+    
+            searchOrder.style.display = 'none';
+            searchDate.style.display = 'none';
+    
+            if (targetValue === 'date') {
+              searchDate.style.display = 'inline';
+            } else {
+              searchOrder.style.display = 'inline';
+            }
+          }
+    
+          searchTarget.addEventListener('change', updateSearchInputVisibility);
+    
+          searchBtn.addEventListener('click', performSearch);
+    
+          searchOrder.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+              performSearch();
+            }
+          });
+    
+          searchDate.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+              performSearch();
+            }
+          });
+    
+          updateSearchInputVisibility();
+        }
+    
+        order();
+    </script>
+
+</body>
+
+</html>

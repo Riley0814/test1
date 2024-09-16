@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tea Lounge</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #fff;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            width: 180px;
+            height: 70px;
+            margin-right: 20px;
+        }
+
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-right: 20px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .icons a {
+            margin-left: 20px;
+        }
+
+        .icons img {
+            width: 24px;
+            height: 24px;
+        }
+
+        main {
+            display: flex;
+            padding: 20px;
+        }
+
+        aside {
+            margin-right: 20px;
+            width: 200px;
+        }
+
+        aside h2 {
+            font-size: 18px;
+            color: #6676a2;
+            position: relative;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        aside h2::before,
+        aside h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 1px;
+            background-color: #6676a2;
+        }
+
+        aside h2::before {
+            top: -10px;
+        }
+
+        aside h2::after {
+            bottom: -10px;
+        }
+
+        .category-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .category-list li {
+            margin-bottom: 10px;
+        }
+
+        .category-list li a {
+            text-decoration: none;
+            color: #d2958a;
+            font-size: 18px;
+        }
+
+        .products {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .product-item {
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+            width: calc(30% - 20px); /* Adjusted width to accommodate margins */
+            margin-bottom: 20px;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background-color: #f0f0f0;
+            margin-bottom: 10px;
+        }
+
+        .pagination {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .pagination a {
+            text-decoration: none;
+            color: #d2958a;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            margin: 0 5px;
+            border-radius: 5px;
+        }
+
+        .pagination a.active {
+            background-color: #d2958a;
+            color: #fff;
+            border-color: #d2958a;
+        }
+
+        footer {
+            background-color: #fff;
+            padding: 15px;
+            text-align: center;
+            border-top: 1px solid #ddd;
+        }
+
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo h2 {
+            text-align: center;
+            color: #7cbd8b;
+        }
+
+        .footer-links a {
+            margin-left: 20px;
+        }
+
+        .footer-links img {
+            width: 24px;
+            height: 24px;
+        }
+
+        footer h3 {
+            margin: 10px 0 0;
+            color: #6d6d6d;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        footer h4 {
+            margin: 10px 0 0;
+            color: #838383;
+            font-size: 12px;
+            text-align: left;
+        }
+
+        footer p {
+            margin: 10px 0 0;
+            color: #9b9b9b;
+            font-size: 10px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo-section">
+                <a href="{{ url_for('home') }}"><img src="{{ url_for('static', filename='images/logo_home.png') }}" alt="Tea Lounge Logo" class="logo"></a>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#home-section">所有商品</a></li>
+                    <li><a href="#group-section">團購專區</a></li>
+                    <li><a href="#about-section">關於我們</a></li>
+                    <li><a href="#contact-section">聯絡我們</a></li>
+                </ul>
+            </nav>
+            <div class="icons">
+                <a href="#"><img src="{{ url_for('static', filename='images/search.png') }}" alt="Search Icon"></a>
+                <a href="#"><img src="{{ url_for('static', filename='images/cart.png') }}" alt="Cart Icon"></a>
+                <a href="{{ url_for('login') }}"><img src="{{ url_for('static', filename='images/user.png') }}" alt="User Icon"></a>
+            </div>
+        </div>
+    </header>
+    <main>
+        <aside>
+            <h2>分類</h2>
+            <ul class="category-list">
+                <li><a href="#">｜ 常溫-豆製品</a></li>
+                <li><a href="#">｜ 無麩菓手作cake</a></li>
+                <li><a href="#">｜ 無麩菓小零嘴</a></li>
+                <li><a href="#">｜ Dilmah帝瑪茶</a></li>
+            </ul>
+        </aside>
+        <section class="products">
+            <div class="product-item">
+                <div class="product-image"></div>
+                <p>商品名稱</p>
+                <p>商品價格</p>
+            </div>
+            <div class="product-item">
+                <div class="product-image"></div>
+                <p>商品名稱</p>
+                <p>商品價格</p>
+            </div>
+            <div class="product-item">
+                <div class="product-image"></div>
+                <p>商品名稱</p>
+                <p>商品價格</p>
+            </div>
+        </section>
+        <div class="pagination">
+            <a href="#" class="active">1</a>
+            <a href="#">2</a>
+            <a href="#">3</a>
+            <a href="#">4</a>
+        </div>
+    </main>
+    <footer>
+        <div class="footer-container">
+            <div class="footer-logo">
+                <h2>聯絡資訊</h2>
+                <h3>客服專線：0981-509-558<br>信箱：rcdesign03@gmail.com</h3>
+            </div>
+            <div class="footer-links">
+                <a href="https://www.facebook.com/teacafelounge"><img src="{{ url_for('static', filename='images/FB.png') }}" alt="Facebook Icon"></a>
+                <a href="https://www.instagram.com/food.is.shiny?igsh=MXZ5anJ2cmx1aHZlbw=="><img src="{{ url_for('static', filename='images/IG.png') }}" alt="Instagram Icon"></a>
+                <a href="#line官網連結"><img src="{{ url_for('static', filename='images/LINE.png') }}" alt="LINE Icon"></a>
+            </div>
+        </div>
+        <p>©Tea Lounge 時尚品茶餐飲</p>
+    </footer>
+</body>
+
+</html>

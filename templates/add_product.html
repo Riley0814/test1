@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <title>新增產品</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.5/cropper.min.css">
+    <style>
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+    
+        html, body {
+          background-color: rgb(250, 250, 250);
+          color: rgb(70, 70, 70);
+          font-family: "Microsoft JhengHei";
+          font-size: 1rem;
+        }
+        button {
+          cursor: pointer;
+          background-color: unset;
+          border: 1px solid #ddd; /* 按鈕邊框 */
+          border-radius: 8px;
+          padding: 5px 10px; /* 按鈕內邊距 */
+        }
+        
+        button.light {
+          color: rgb(93, 93, 93);
+          font-size: 1rem;
+        }
+        
+        .main_menu, #_main_menu {
+          width: 200px;
+          background-color: #40698b;
+          height: 100vh;
+          box-shadow: 2px 0px 8px 0 rgba(0, 0, 0, 0.04);
+          position: fixed;
+          top: 0;
+          left: 0;
+          z-index: 1000;
+        }
+        
+        .main_menu ul, #_main_menu ul {
+          margin: 0;
+          padding: 30px 15px;
+          list-style-type: none;
+        }
+        
+        .main_menu ul li, #_main_menu ul li {
+          margin-bottom: 15px;
+        }
+        
+        .main_menu ul li a, #_main_menu ul li a {
+          color: white;
+          text-decoration: none;
+          font-size: 1.1rem;
+          display: block;
+          padding: 10px;
+        }
+        #_top_menu, .top_menu {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          z-index: 500;
+        }
+        
+        #_top_menu ._container, .top_menu .container {
+          width: 100%;
+          min-height: 50px;
+          background-color: white;
+          display: flex;
+          justify-content: flex-end;
+        }
+        
+        #_top_menu ._container .content, .top_menu .container .content {
+          padding: 0 15px;
+          min-height: 50px;
+          box-shadow: 10px 2px 8px 0 rgba(0, 0, 0, 0.06);
+          margin-left: auto;
+        }
+
+        @media (min-width: 1024px) {
+            #_top_menu ._container {
+                padding-left: 200px; /* 留出側邊欄的寬度 */
+            }
+        }
+
+        /* 主要內容 */
+        #main {
+            margin-top: 50px; /* 留出頂部選單的空間 */
+            margin-left: 200px; /* 留出側邊欄的空間 */
+            padding: 15px;
+            background-color: rgb(250, 250, 250);
+            min-height: calc(100vh - 50px); /* 適應視口高度，減去頂部選單的高度 */
+        }
+
+        /* 表單容器 */
+        .form-container {
+            width: 70%; /* 縮小表單寬度 */
+            max-width: 600px; /* 設置最大寬度 */
+            margin: 0 auto; /* 置中表單 */
+            border-radius: 10px;
+            background-color: white;
+            padding: 15px;
+        }
+
+        /* 表單標籤 */
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        /* 表單輸入 */
+        form input[type="text"],
+        form input[type="number"],
+        form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+        }
+
+        /* 提交按鈕 */
+        form input[type="submit"] {
+            background-color: #40698b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        form input[type="submit"]:hover {
+            background-color: #305c7c;
+        }
+
+        .img_box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            overflow-y: scroll;
+            max-height: 400px;
+            margin-top: 20px;
+        }
+
+        @media (min-width: 1024px) {
+            .img_box {
+                max-height: 50vh;
+            }
+        }
+
+        .img_box img {
+            width: 100%;
+        }
+
+        .img_box .items {
+            width: calc((100% - 60px) / 3);
+            text-align: center;
+        }
+        .img_box .items img {
+            max-width: 100%; /* 調整圖片寬度 */
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        @media (max-width: 640px) {
+            .img_box .items {
+                width: calc((100% - 30px) / 2);
+            }
+        }
+
+        .img_box .items .btn {
+            margin-top: 15px;
+        }
+
+        .img_box .items .btn button {
+            border: 1px solid rgb(215, 215, 215);
+            border-radius: 3px;
+            line-height: 15px;
+        }
+
+        .img_box .items .btn button.delete {
+            background-color: rgb(204, 75, 75);
+            color: white;
+        }
+
+        .add_img_box {
+            margin-top: 50px;
+            border: 2px dashed rgb(195, 195, 195);
+            padding: 30px 15px;
+            text-align: center;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            position: relative;
+            margin: 5% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 600px;
+            background: #fff;
+            border-radius: 8px;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        #cropper-controls {
+            margin-top: 10px;
+            text-align: center;
+            width: 300px;
+            height: 300px;
+            border: 2px solid #ddd;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #cropper-image {
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        #cropped-image-preview {
+            margin-top: 20px;
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            padding: 5px;
+            border-radius: 5px;
+            object-fit: contain;
+        }
+
+        #images-preview img {
+            max-width: 150px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .cropper-crop-box {
+            border: 2px solid #39f !important; /* 確保裁剪框的邊框顯示為藍色 */
+        }
+        
+        .cropper-view-box {
+            border: 2px solid #39f !important; /* 確保顯示框的邊框顯示為藍色 */
+        }
+
+
+        /* 修正裁剪框顯示問題 */
+        .cropper-crop-box,
+        .cropper-view-box {
+            position: absolute;
+            border: 2px solid #39f;
+        }
+    </style>
+</head>
+<body>
+    <div id="_top_menu">
+        <div class="_container">
+            <span class="admin-info">{{ session['username'] if session.get('username') else '管理者帳號' }}</span>
+            <a href="{{ url_for('logout') }}">
+                <button class="logout-btn">登出</button>
+            </a>
+        </div>
+    </div>
+    <div id="main">
+        <div id="_main_menu">
+            <ul>
+              <li><a href="{{ url_for('home') }}">首頁</a></li>
+              <li><a href="{{ url_for('orders') }}">訂單管理</a></li>
+              <li><a href="{{ url_for('products') }}"">商品設定</a></li>
+            </ul>
+        </div>
+        <h2>新增產品</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="message-container">
+                    {% for category, message in messages %}
+                        <div class="message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        <form action="{{ url_for('add_product') }}" method="post" enctype="multipart/form-data">
+            <label for="name">名稱:</label>
+            <input type="text" id="name" name="ProductName" required><br><br>
+            
+            <label for="quantity">數量:</label>
+            <input type="number" id="quantity" name="Quantity" required><br><br>
+            
+            <label for="price">價格:</label>
+            <input type="text" id="price" name="Price"><br><br>
+    
+            <label for="ingredients">成分:</label>
+            <textarea id="ingredients" name="Ingredients" required></textarea><br><br>
+
+            <label for="origin">產地:</label>
+            <input type="text" id="origin" name="Origin"><br><br>
+
+            <label for="notes">備註:</label>
+            <textarea id="notes" name="Notes"></textarea><br><br>
+
+            <label for="images">上傳圖片:</label>
+            <input type="file" id="images" name="images" multiple><br><br>
+
+            <div id="images-preview"></div><br><br>
+
+            <input type="submit" value="提交">
+        </form>
+        <div id="img_box" class="img_box"></div>
+
+        <!-- 圖片裁剪模態框 -->
+        <div id="cropperModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeCropperModal()">&times;</span>
+                <h3>預覽圖片</h3>
+                <div id="cropper-controls">
+                    <img id="cropper-image" src="" alt="圖片裁剪區域">
+                </div>
+                <button id="cropImageBtn">預覽圖片</button>
+            </div>
+        </div>
+    <script src="https://unpkg.com/cropperjs@1.6.5/dist/cropper.min.js"></script>
+    <script>
+        let cropper;
+        let currentFileIndex = 0;
+        let filesToCrop = [];
+
+        function loadAndCropImage(file) {
+            let reader = new FileReader();
+            reader.onload = function (event) {
+                let imgElement = document.getElementById('cropper-image');
+                imgElement.src = event.target.result;
+                document.getElementById('cropperModal').style.display = 'block';
+
+                // 初始化 Cropper.js
+                if (cropper) {
+                    cropper.destroy(); // 如果已經初始化，先銷毀再重新初始化
+                }
+                cropper = new Cropper(imgElement, {
+                    aspectRatio: NaN,  // 允許自由調整裁剪框的比例
+                    viewMode: 1,
+                    preview: '#cropped-image-preview',
+                    movable: true,     // 允許移動裁剪框
+                    zoomable: true,    // 允許縮放圖片
+                    rotatable: true,   // 允許旋轉圖片
+                    responsive: true   // 使 Cropper 在窗口大小改變時自適應
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        document.getElementById('images').addEventListener('change', function (e) {
+            filesToCrop = Array.from(e.target.files);
+            if (filesToCrop.length > 0) {
+                currentFileIndex = 0;
+                loadAndCropImage(filesToCrop[currentFileIndex]);
+            }
+        });
+
+        document.getElementById('cropImageBtn').addEventListener('click', function () {
+            let canvas = cropper.getCroppedCanvas({
+                width: 150, // 裁剪後的寬度
+                height: 150 // 裁剪後的高度
+            });
+
+            // 清空之前的裁剪預覽
+            document.getElementById('images-preview').innerHTML = '';
+
+            // 顯示裁剪後的圖片
+            let croppedImage = new Image();
+            croppedImage.src = canvas.toDataURL();
+            croppedImage.style.maxWidth = '150px'; // 與預覽圖片一致
+            croppedImage.style.height = 'auto';
+
+            // 在預覽區顯示裁剪後的圖片
+            document.getElementById('images-preview').appendChild(croppedImage);
+
+            // 關閉裁剪模態框
+            document.getElementById('cropperModal').style.display = 'none';
+
+            // 如果有更多圖片，則加載下一張
+            currentFileIndex++;
+            if (currentFileIndex < filesToCrop.length) {
+                loadAndCropImage(filesToCrop[currentFileIndex]);
+            }
+        });
+
+        function closeCropperModal() {
+            document.getElementById('cropperModal').style.display = 'none';
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.querySelector('form');
+            const nameInput = document.getElementById('name');
+            const quantityInput = document.getElementById('quantity');
+            const priceInput = document.getElementById('price');
+            const ingredientsInput = document.getElementById('ingredients');
+
+            form.addEventListener('submit', (e) => {
+                let valid = true;
+
+                // 確認名稱欄位
+                if (!nameInput.value.trim() || nameInput.value.trim().length < 2) {
+                    alert('產品名稱不得少於 2 個字符！');
+                    nameInput.focus();
+                    valid = false;
+                }
+
+                // 確認數量欄位
+                if (!quantityInput.value.trim() || isNaN(quantityInput.value) || quantityInput.value <= 0) {
+                    alert('數量必須是有效的正整數！');
+                    quantityInput.focus();
+                    valid = false;
+                }
+
+                // 確認價格格式
+                if (priceInput.value.trim() && !/^\d+(\.\d{0,2})?$/.test(priceInput.value)) {
+                    alert('價格格式不正確，請輸入有效的價格（例如：100 或 100.00）。');
+                    priceInput.focus();
+                    valid = false;
+                }
+
+                // 確認成分欄位
+                if (!ingredientsInput.value.trim()) {
+                    alert('成分欄位不得為空！');
+                    ingredientsInput.focus();
+                    valid = false;
+                }
+
+                if (!valid) {
+                    e.preventDefault();
+                }
+            });
+
+            // 預覽上傳的圖片
+            const imagesInput = document.getElementById('images');
+            const previewContainer = document.getElementById('images-preview');
+
+            imagesInput.addEventListener('change', () => {
+                previewContainer.innerHTML = '';
+                const files = imagesInput.files;
+                for (const file of files) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        previewContainer.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

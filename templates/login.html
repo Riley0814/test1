@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登入</title>
+  <style>
+    main.container {
+      width: 100%;
+      max-width: 600px;
+      position: fixed;
+      left: 50%;
+      top: 200px;
+      transform: translateX(-50%);
+    }
+    @media (max-width: 768px) {
+      main.container {
+        width: calc(100% - 15px);
+      }
+    }
+    main.container h2 {
+      text-align: center;
+      color: #dddddd;
+      font-size: 3rem;
+      padding: 0;
+      margin: 0;
+    }
+    @media (max-width: 768px) {
+      main.container h2 {
+        font-size: 2.5rem;
+      }
+    }
+    @media (max-width: 640px) {
+      main.container h2 {
+        font-size: 2rem;
+      }
+    }
+    main.container #content {
+      margin-top: 12px;
+      padding: 30px;
+      border-radius: 8px;
+      background-color: rgb(250, 250, 250);
+      box-shadow: 2px 2px 8px 1px rgba(3, 3, 3, 0.12);
+    }
+    @media (max-width: 768px) {
+      main.container #content {
+        padding: 18px;
+      }
+    }
+    main.container #content .item {
+      margin-bottom: 1rem;
+    }
+    main.container #content .item:first-child {
+      margin-top: 10px;
+    }
+    @media (max-width: 640px) {
+      main.container #content .item:first-child {
+        margin-top: 7px;
+      }
+    }
+    main.container #content .item input {
+      width: 100%;
+      padding: 10px 15px;
+      border-radius: 10px;
+      outline: unset;
+      border: unset;
+    }
+    main.container #content .buttons {
+      margin-top: 25px;
+      text-align: center;
+    }
+    main.container #content .buttons button#login {
+      background-color: rgb(213, 181, 142);
+      width: 100%;
+      font-weight: bold;
+      margin-bottom: 5px;
+      padding: 13px 5px;
+      border: none; 
+      border-radius: 10px; 
+      cursor: pointer; 
+    }
+    @media (max-width: 640px) {
+      main.container #content .buttons button#login {
+        padding: 8px;
+      }
+    }
+    main.container #content .buttons button.light {
+      font-weight: bold;
+      font-size: 1.1rem; 
+      background-color: transparent; 
+      border: none; 
+      cursor: pointer; 
+    }
+    main.container #content .buttons button.light:hover {
+      background-color: rgb(250, 250, 250); 
+    }
+    input,
+    button#login {
+      font-size: 1.3rem;
+    }
+    @media (max-width: 768px) {
+      main.container #content .buttons button.light {
+        font-size: 1rem; 
+      }
+    }
+    
+    @media (max-width: 640px) {
+      main.container #content .buttons button.light {
+        font-size: 0.9rem; 
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 登入 -->
+  <main class="container login">
+    <h2>LOGIN 登入</h2>
+    <!-- 輸入內容 -->
+    <div id="content">
+      <!-- 帳號 -->
+      <div class="item">
+        <input type="text" id="username" placeholder="帳號" />
+      </div>
+      <!-- 密碼 -->
+      <div class="item">
+        <input type="password" id="password" placeholder="密碼" />
+      </div>
+      <!-- 登入按鈕 -->
+      <div class="buttons">
+        <form id="loginForm">
+          <button id="login">登入</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+    <script>
+      (function () {
+        function loginHandler() {
+          const loginForm = document.getElementById('loginForm');
+          const usernameInput = document.getElementById('username');
+          const passwordInput = document.getElementById('password');
+    
+          // 監聽 Enter 鍵事件
+          document.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              loginForm.dispatchEvent(new Event('submit'));
+            }
+          });
+    
+          loginForm.addEventListener("submit", function (event) {
+            event.preventDefault(); // 防止表單默認提交行為
+    
+            const username = usernameInput.value;
+            const password = passwordInput.value;
+    
+            fetch('/manager_login', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ username, password }),
+            })
+            .then(response => {
+              if (response.ok) {
+                window.location.href = '/orders'; // 登入成功後跳轉到訂單頁面
+              } else {
+                return response.json().then(data => {
+                  alert(data.message);
+                });
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert("發生錯誤，請稍後再試。");
+            });
+          });
+        }
+    
+        loginHandler();
+      })();
+    </script>
+
+</body>
+</html>

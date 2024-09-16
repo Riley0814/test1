@@ -1,0 +1,42 @@
+.iStock {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.iStock img {
+    width: 200px;
+    height: auto;
+}
+
+nav {
+    text-align: center;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+li {
+    display: inline;
+    margin-right: 20px;
+}
+
+li a {
+    display: inline-block;
+    padding: 10px;
+    text-decoration: none;
+    color: black;
+}
+
+li a:hover {
+    background-color: lightgray;
+    color: white;
+}
+
+footer {
+    text-align: center;
+    margin-top: 10px;
+}

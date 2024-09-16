@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>註冊</title>
+    <!-- 引入 Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 自定義 CSS -->
+    <style>
+        body {
+            background-color: #6B886D;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+            background-color: #D9E2D0;
+            padding: 20px;
+        }
+        .card-title {
+            color: #333;
+            font-size: 1.5em;
+            text-align: center;
+        }
+        .form-control {
+            border-radius: 10px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #ced4da;
+        }
+        .btn-primary {
+            border-radius: 10px;
+            padding: 15px;
+            background-color: #6B886D;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #4a634b;
+        }
+        .btn-line {
+            border-radius: 10px;
+            padding: 15px;
+            background-color: #00b900;
+            border: none;
+            color: white;
+        }
+        .btn-line:hover {
+            background-color: #009900;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title">註冊</h1>
+                        <form id="registerForm" method="POST" action="{{ url_for('register') }}">
+                            {{ form.hidden_tag() }}
+                            <div class="form-group">
+                                <label for="name">姓名：</label>
+                                {{ form.name(class="form-control", placeholder="請輸入您的姓名") }}
+                                {% if form.name.errors %}
+                                    <div class="text-danger">{{ form.name.errors[0] }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email：</label>
+                                {{ form.email(class="form-control", placeholder="請輸入您的Email") }}
+                                {% if form.email.errors %}
+                                    <div class="text-danger">{{ form.email.errors[0] }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">手機號碼：</label>
+                                {{ form.phone(class="form-control", placeholder="請輸入您的手機號碼") }}
+                                {% if form.phone.errors %}
+                                    <div class="text-danger">{{ form.phone.errors[0] }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="birthday">生日：</label>
+                                {{ form.birthday(class="form-control", placeholder="YYYY-MM-DD") }}
+                                {% if form.birthday.errors %}
+                                    <div class="text-danger">{{ form.birthday.errors[0] }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="password">密碼：</label>
+                                {{ form.password(class="form-control", placeholder="請輸入6位數以上的密碼") }}
+                                {% if form.password.errors %}
+                                    <div class="text-danger">{{ form.password.errors[0] }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="pass_confirm">確認密碼：</label>
+                                {{ form.pass_confirm(class="form-control", placeholder="請輸入確認密碼") }}
+                                {% if form.pass_confirm.errors %}
+                                    <div class="text-danger">{{ form.pass_confirm.errors[0] }}</div>
+                                {% endif %}
+                            </div>
+                            <button type="submit" id="submit" class="btn btn-primary btn-block">立即註冊</button>
+                        </form>
+                        <hr>
+                        <button class="btn btn-line btn-block" onclick="location.href='{{ url_for('line_login') }}'">使用LINE快速註冊</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 引入 Bootstrap JS 和依賴 -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function formatBirthday() {
+                const input = document.getElementById('birthday');
+                let value = input.value.replace(/\D/g, ''); // 去除非數字字符
+                if (value.length >= 4) {
+                    value = value.slice(0, 4) + '-' + value.slice(4);
+                }
+                if (value.length >= 7) {
+                    value = value.slice(0, 7) + '-' + value.slice(7);
+                }
+                input.value = value.slice(0, 10); // 控制最大長度
+            }
+
+            function validateForm(event) {
+                const password = document.getElementById('password').value;
+                const pass_confirm = document.getElementById('pass_confirm').value;
+                
+                if (password !== pass_confirm) {
+                    alert('密碼和確認密碼不一致，請重新輸入。');
+                    event.preventDefault(); // 阻止表单提交
+                    return false;
+                }
+
+                const confirmation = confirm('確認是否要提交？');
+                if (!confirmation) {
+                    event.preventDefault(); // 阻止表单提交
+                    return false;
+                }
+                return true; // 允许表单提交
+            }
+
+            // 注册按钮点击事件
+            document.getElementById('registerForm').addEventListener('submit', validateForm);
+            // 生日输入框格式化
+            document.getElementById('birthday').addEventListener('input', formatBirthday);
+        });
+    </script>
+</body>
+</html>

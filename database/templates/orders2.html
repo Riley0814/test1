@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orders</title>
+  <link rel="stylesheet" href="./../css/all.css">
+  <link rel="stylesheet" href="./../css/order.css">
+</head>
+
+<body>
+  <div class="flex overflow-y-hidden">
+    <!-- common menu -->
+    <div id="_main_menu"></div>
+    <!-- content -->
+    <div id="_main_content" class="y-scroll">
+      <div id="_top_menu"></div>
+      <div class="_main_inner">
+        <div id="_navigation"></div>
+        <main class="container border">
+          <!-- order controller -->
+          <section id="top_table_info" class="flex">
+            <!-- search -->
+            <div id="search" class="flex text-center w-full">
+              <div class="flex content">
+                <select id="search_targt">
+                  <option value="id">
+                    搜尋訂單號
+                  </option>
+                  <option value="phone">
+                    搜尋電話號碼
+                  </option>
+                  <option value="name">
+                    搜尋名字
+                  </option>
+                  <option value="email">
+                    搜尋EMAIL
+                  </option>
+                </select>
+                <input id="search_order" type="text" placeholder="..." />
+
+                <button id="search_btn" class="pr-10 pl-10">搜尋</button>
+
+              </div>
+            </div>
+            <!-- order controller -->
+            <div id="order_controller">
+              <div class="flex text-center">
+                <label for="pet-select" class="mr-10">顯示</label>
+                <select name="showList" id="showListOption">
+                </select>
+              </div>
+            </div>
+          </section>
+          <!-- order content -->
+          <section class="mt-20">
+            <div id="orderContent" class="border _scroll_container">
+              <div class="_scroll">
+                <div class="row title">
+                  <div class="th w20">
+                    <p>訂單號碼</p>
+                  </div>
+                  <div class="th w10 ">
+                    <p>訂單日期</p>
+                  </div>
+                  <div class="th w10 ">
+                    <p>訂單狀態</p>
+                  </div>
+                  <div class="th w10 ">
+                    <p>付款狀態</p>
+                  </div>
+                  <div class="th w10 ">
+                    <p>送貨狀態</p>
+                  </div>
+                  <div class="th w20">
+                    <p>訂購人</p>
+                  </div>
+                  <div class="th w10 ">
+                    <p>合計</p>
+                  </div>
+                </div>
+                <div class="items">
+                  <!-- ...code -->
+                </div>
+              </div>
+            </div>
+
+            <div id="pagination">
+              <ul>
+                <!-- ...code -->
+              </ul>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+
+    // 引入共享頁面
+    import { includeHTML, sideMenu, navigation, topMenu } from './../assets/js/includModule.js'
+
+    // 引入order js
+    import { order } from './../assets/js/order.js'
+
+    (function () {
+      window.onload = () => {
+        includeHTML();
+        sideMenu();
+        topMenu();
+        navigation();
+        order();
+      }
+    })();
+  </script>
+
+
+</body>
+
+</html>

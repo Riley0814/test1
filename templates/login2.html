@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tea Lounge 登入</title>
+    <!-- 引入 Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 自訂 CSS -->
+    <style>
+        body {
+            background-color: #7a9461; /* Updated background color to match the screenshot */
+        }
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-box {
+            background-color: #a5b795; /* Match the login box color */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        .login-box h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-control {
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ced4da;
+        }
+        .btn-primary {
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #6c757d;
+            border: none;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .btn-primary:hover {
+            background-color: #5a6268;
+        }
+        .btn-line {
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #28a745;
+            border: none;
+            color: white;
+            width: 100%;
+        }
+        .btn-line:hover {
+            background-color: #218838;
+        }
+        .register-link {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .register-link a {
+            color: #007bff;
+        }
+        .register-link a:hover {
+            text-decoration: none;
+            color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h1>Tea Lounge</h1>
+            <p class="text-center">時尚品茶餐飲</p>
+            <form method="POST" action="{{ url_for('login') }}">
+                {{ form.hidden_tag() }}
+                <!-- CSRF 保護 -->
+                {{ form.csrf_token }}
+                <div class="form-group">
+                    {{ form.phone.label(class="form-label") }}
+                    {{ form.phone(class_="form-control", placeholder="請輸入您的Email/電話/使用者名稱") }}
+                </div>
+                <div class="form-group">
+                    {{ form.password.label(class="form-label") }}
+                    {{ form.password(class_="form-control", placeholder="請輸入您的密碼") }}
+                </div>
+                <button type="submit" class="btn btn-primary">立即登入</button>
+            </form>
+            <hr>
+            <!-- 使用 LINE 登入按鈕 -->
+            <button class="btn btn-line" onclick="location.href='{{ url_for('line_login') }}'">快速登入</button>
+            <div class="register-link">
+                <p><a href="{{ url_for('forgot_password') }}">忘記密碼</a> | <a href="{{ url_for('register') }}">註冊新會員</a></p>
+            </div>
+
+            <!-- Flash 消息顯示 -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+    <!-- 引入 Bootstrap JS 和相依性 -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

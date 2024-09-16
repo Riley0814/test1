@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>訂單管理</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      background-color: rgb(250, 250, 250);
+      color: rgb(70, 70, 70);
+      font-family: "Microsoft JhengHei";
+      font-size: 1rem;
+    }
+
+    a, button, p, span {
+      text-decoration: none;
+      color: rgb(70, 70, 70);
+      font-size: 1rem;
+    }
+    
+    button {
+      cursor: pointer;
+      background-color: unset;
+      border: 1px solid #ddd; /* 按鈕邊框 */
+      border-radius: 8px;
+      padding: 5px 10px; /* 按鈕內邊距 */
+    }
+    
+    button.light {
+      color: rgb(93, 93, 93);
+      font-size: 1rem;
+    }
+
+
+    .linka, .link a {
+      color: #506c97;
+    }
+
+    .flex {
+      display: flex;
+    }
+
+    .flex-wrap {
+      flex-wrap: wrap;
+    }
+
+    .item-center {
+      align-items: center;
+    }
+
+    .between {
+      justify-content: space-between;
+    }
+
+    /* 主選單樣式 */
+    #_main_menu {
+      width: 200px;
+      background-color: #40698b;
+      height: 100vh; /* 讓側邊欄覆蓋整個視口高度 */
+      box-shadow: 2px 0px 8px 0 rgba(0, 0, 0, 0.04);
+      position: fixed;
+      top: 0; /* 從視口的最上面開始 */
+      left: 0;
+      z-index: 1000; /* 確保側邊欄層級高於頂部選單 */
+      transition: transform 0.3s ease;
+    }
+    
+    /* 漢堡按鈕 */
+    #hamburger_menu {
+      display: none; /* 初始設置為隱藏 */
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      font-size: 30px;
+      color: white;
+      z-index: 1001;
+      cursor: pointer;
+    }
+
+
+    @media (max-width: 1024px) {
+      #_main_menu {
+        display: none;
+        left: -100%;
+      }
+    }
+
+    #_main_menu ul {
+      margin: 0;
+      padding-top: 30px 15px;
+      list-style-type: none;
+    }
+
+    #_main_menu ul li {
+      padding: 0 15px;
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+    }
+
+    #_main_menu ul li a {
+      color: white;
+      display: block;
+      padding: 10px;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+
+    #_main_menu ul li a:hover {
+      background-color: #305c7c;
+    }
+
+    /* 頂部選單 */
+    #_top_menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 500;
+    }
+
+    #_top_menu ._container {
+      width: 100%;
+      min-height: 50px;
+      background-color: white;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    @media (min-width: 1024px) {
+      #_top_menu ._container {
+        padding-left: 200px;
+      }
+    }
+
+    #_top_menu ._container .content {
+      padding: 0 15px;
+      min-height: 50px;
+      box-shadow: 10px 2px 8px 0 rgba(0, 0, 0, 0.06);
+      margin-left: auto;
+      align-items: center;
+      justify-content: end;
+    }
+
+    /* 主內容區 */
+    #_main_content {
+      margin-left: 200px; /* 側邊欄的寬度 */
+      margin-top: 50px; /* 顯示頂部選單 */
+      padding: 15px;
+      flex: 1;
+      background-color: white;
+      height: calc(100vh - 50px); /* 高度為整個視口高度減去頂部選單高度 */
+      overflow-y: auto;
+      transition: margin-left 0.3s ease;
+    }
+    
+    @media (max-width: 768px) {
+      #_main_menu {
+        transform: translateX(-100%); /* 預設隱藏側邊選單 */
+      }
+    
+      #hamburger_menu {
+        display: block; /* 顯示漢堡按鈕 */
+      }
+    
+      #_main_content {
+        margin-left: 0; /* 移除側邊選單的空間 */
+      }
+    
+      #_main_menu.active {
+        transform: translateX(0); /* 顯示側邊選單 */
+      }
+    }
+    
+    #_main_content .container {
+      width: 100%;
+      margin: 0;
+      border-radius: 10px 10px 0 0;
+      background-color: white;
+      padding: 15px 15px 80px;
+    }
+     
+    .main-content-wrapper {
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .main-content-wrapper ._left, 
+    .main-content-wrapper ._right {
+      flex: 1;
+      margin: 0 10px;
+    }
+
+    /* 內容區域樣式 */
+    .space {
+      padding: 20px 15px;
+      border-bottom: 1px solid rgb(215, 215, 215);
+    }
+    
+    .content_box {
+      margin: 15px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .content_box .title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      border-bottom: 1px solid rgb(215, 215, 215);
+      padding-bottom: 10px;
+    }
+    
+    .content_box .title h2 {
+      font-size: 1.2rem;
+      color: #977245;
+    }
+    
+    .content_box .title select {
+      font-size: 1.2rem;
+      padding: 5px 10px;
+      border-radius: 4px;
+      border: 1px solid rgb(200, 200, 200);
+    }
+
+    .content_box .title .edit {
+      cursor: pointer;
+      margin-top: 2px;
+      margin-left: 5px;
+      display: flex;
+      justify-items: center;
+      align-items: center;
+    }
+    
+    .content_box .content {
+      padding: 20px 25px;
+    }
+    
+    .content_box .content span {
+      word-break: break-all;
+    }
+    
+    .content_box .content .box {
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .content_box .content .box:last-child {
+      margin-bottom: unset;
+    }
+    
+    .content_box .content .box span, .content_box .content .box a {
+      display: inline-block;
+    }
+    
+    .content_box .content .title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    .content_box .content.img_content .box .flex_left {
+      width: 30px; /* 設定更小的寬度 */
+      height: 20px; /* 設定更小的高度 */
+      margin-right: 10px; /* 調整邊距 */
+      overflow: hidden; /* 隱藏超出容器的圖片部分 */
+    }
+    
+    .content_box .content.img_content .box .flex_left img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* 確保圖片不會變形 */
+    }
+    .content_box .content.img_content .box .flex_right .tag p {
+      font-size: 0.8rem;
+      display: inline-flex;
+      padding: 4px 8px;
+      background-color: rgb(213, 181, 142);
+    }
+    
+    .content_box .content.img_content .box .flex_right .title {
+      margin-top: 5px;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    
+    .content_box .content.img_content .box .flex_right .option {
+      margin: 5px 0;
+    }
+    
+    .content_box .content.img_content .box .flex_right .option span {
+      display: inline-block;
+      margin: unset;
+    }
+    
+    .content_box .content.img_content .box .flex_right .light {
+      color: rgb(94, 94, 94);
+    }
+    
+    .box_indent .price {
+      letter-spacing: 1px;
+    }
+    
+    .box_indent .items {
+      margin: 10px 0;
+    }
+    
+    .box_indent .select {
+      padding: 5px 8px;
+      font-size: 1.2rem;
+      border: 1px solid rgb(200, 200, 200);
+      border-radius: 4px;
+    }
+    
+    select:focus-visible {
+      outline: none;
+    }
+    .status-select {
+      margin-left: 10px;
+    }
+
+    /* 表格樣式 */
+    .row {
+      display: flex;
+      justify-content: left;
+      border-bottom: 1px solid rgb(215, 215, 215);
+    }
+
+    .row.title {
+      font-weight: 700;
+    }
+
+    .row.title p {
+      color: #606060;
+    }
+
+    .row .th, .row .td {
+      padding: 10px 5px;
+      display: flex;
+      align-items: center;
+    }
+
+    .row .th {
+      font-weight: 600;
+    }
+
+    .row .td {
+      font-size: 0.8rem;
+    }
+
+    .row .td.center {
+      text-align: center;
+    }
+
+    .row .td a {
+      color: #506c97;
+    }
+
+    .row .td a:hover {
+      text-decoration: underline;
+    }
+
+    /* 排版樣式 */
+    .page-wrapper {
+      width: calc(100% - 30px);
+      margin: 15px auto 0 auto;
+      padding: 15px;
+      border-radius: 10px;
+      background-color: white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .page-wrapper .pagination {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+    }
+    
+    .page-wrapper .pagination button {
+      border: 1px solid #ddd;
+      background-color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      margin: 0 5px;
+      font-size: 0.8rem;
+    }
+
+    .page-wrapper .pagination button:hover {
+      background-color: #f0f0f0;
+    }
+    
+    .page-wrapper .pagination button.disabled {
+      color: #ccc;
+      border: 1px solid #ddd;
+      cursor: not-allowed;
+    }
+    /* 調整產品框樣式 */
+    .product-box {
+      margin-bottom: 20px; /* 增加產品框的下邊距 */
+    }
+    
+    /* 調整產品標題和細節部分的排列方式 */
+    .product-header {
+      display: flex;
+      align-items: flex-start; /* 將子元素對齊到起始位置 */
+    }
+    
+    /* 調整產品圖片樣式 */
+    .product-image {
+      margin-right: 15px; /* 產品圖片與其他內容之間的間距 */
+    }
+    
+    .product-image img {
+      max-width: 100px; /* 設定圖片最大寬度 */
+      height: auto; /* 自動調整高度以保持比例 */
+      object-fit: cover; /* 確保圖片不會變形 */
+      border-radius: 4px; /* 圓角邊框，可選 */
+    }
+    
+    /* 調整產品信息樣式 */
+    .product-info {
+      flex: 1;
+    }
+    
+    /* 產品名稱樣式 */
+    .product-info h3 {
+      margin: 0;
+      margin-bottom: 5px; /* 將產品名稱與價格信息的間距調整 */
+    }
+    
+    /* 調整產品細節樣式 */
+    .product-details {
+      margin-top: 10px; /* 產品名稱與價格信息之間的間距 */
+    }
+    
+    .product-details p {
+      margin: 0;
+      font-size: 1rem; /* 調整字體大小 */
+      color: rgb(70, 70, 70); /* 調整字體顏色 */
+    }
+    /* 訂單狀態 */
+    .status_pending {
+      background-color: #d6a863; /* 黃色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    
+    .status_handling {
+      background-color: #6fb96f; /* 綠色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    
+    .status_complete {
+      background-color: #ffffff; /* 白色 */
+      color: #000000; /* 黑色文字 */
+      border: 1px solid rgb(215, 215, 215); /* 白色邊框 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    
+    .status_cancel {
+      background-color: #c3c3c3; /* 灰色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    
+    .status_return {
+      background-color: #317eae; /* 藍色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    
+    /* 付款狀態 */
+    .status_unpaid {
+      background-color: #d6a863; /* 黃色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    
+    .status_paid {
+      background-color: #6fb96f; /* 綠色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    
+    .status_refund {
+      background-color: #317eae; /* 藍色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    /* 配送狀態 */
+
+    
+    .status_shipped {
+      background-color: #4a90e2; /* 藍色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    
+    .status_arrived {
+      background-color: #2c3e50; /* 深灰色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    
+    .status_return {
+      background-color: #e74c3c; /* 紅色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+    
+    .status_cancel {
+      background-color: #95a5a6; /* 灰色 */
+      color: #ffffff; /* 白色文字 */
+      border-radius: 6px; /* 邊框圓角 */
+      padding: 5px 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="_top_menu">
+    <div class="_container">
+      <span class="admin-info">{{ session['username'] if session.get('username') else '管理者帳號' }}</span>
+      <a href="{{ url_for('manager_logout') }}">
+        <button class="logout-btn">登出</button>
+      </a>
+    </div>
+  </div>
+  
+   <div id="hamburger_menu" onclick="toggleMenu()">
+    &#9776; <!-- 三條線的符號 -->
+  </div>
+  
+  <div class="flex overflow-y-hidden">
+    <!-- common menu -->
+    <div id="_main_menu" class="_main_menu">
+      <ul>
+        <li><a href="/home">首頁</a></li>
+        <li><a href="/orders">訂單管理</a></li>
+        <li><a href="/products">商品設定</a></li>
+      </ul>
+    </div>
+    <!-- content -->
+    <div id="_main_content" class="y-scroll">
+        <div id="_navigation"></div>
+        <main class="pb-15 flex mx-10">
+            <div class="_left">
+                <!-- 訂單資料 -->
+                <div id="_order_data" class="content_box border">
+                    <div class="title">
+                        <h2>訂單資料</h2>
+                        <select id="order-status" class="select" onchange="updateStatus('OrderStatusID', this.value)">
+                            <option value="default" selected>- 更改訂單狀態 -</option>
+                            <option value="1" {% if order.OrderStatusID == 1 %}selected{% endif %}>待確定</option>
+                            <option value="2" {% if order.OrderStatusID == 2 %}selected{% endif %}>處理中</option>
+                            <option value="3" {% if order.OrderStatusID == 3 %}selected{% endif %}>已完成</option>
+                            <option value="4" {% if order.OrderStatusID == 4 %}selected{% endif %}>已取消</option>
+                        </select>
+                    </div>
+                    <div class="content">
+                        <div class="box">
+                            <div class="flex">
+                                <div class="flex_left">
+                                    <p>訂單狀態: </p>
+                                </div>
+                                <div class="flex_right">
+                                    <p class="{% if order.OrderStatusID == 1 %}status_pending{% elif order.OrderStatusID == 2 %}status_handling{% elif order.OrderStatusID == 3 %}status_complete{% elif order.OrderStatusID == 4 %}status_cancel{% endif %}">
+                                        {% if order.OrderStatusID == 1 %}待確定
+                                        {% elif order.OrderStatusID == 2 %}處理中
+                                        {% elif order.OrderStatusID == 3 %}已完成
+                                        {% elif order.OrderStatusID == 4 %}已取消
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box">
+                            <div class="flex">
+                                <div class="flex_left">
+                                    <p>訂單編號: </p>
+                                </div>
+                                <div class="flex_right">
+                                    <p id="order-id" class="value">{{ order.OrderID }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box">
+                            <div class="flex">
+                                <div class="flex_left">
+                                    <p>訂單日期: </p>
+                                </div>
+                                <div class="flex_right">
+                                    <p id="order-date" class="value">{{ order.OrderDate.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box">
+                            <div class="flex">
+                                <div class="flex_left">
+                                    <p>訂購人姓名: </p>
+                                </div>
+                                <div class="flex_right">
+                                    <p id="customer-name" class="value">{{ order_details[0].CustomerName }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box">
+                            <div class="flex">
+                                <div class="flex_left">
+                                    <p>訂購人電話: </p>
+                                </div>
+                                <div class="flex_right">
+                                    <p id="customer-phone" class="value">{{ order_details[0].CustomerPhone }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box">
+                            <div class="flex">
+                                <div class="flex_left">
+                                    <p>訂購人郵件: </p>
+                                </div>
+                                <div class="flex_right">
+                                    <p id="customer-email" class="value">{{ order_details[0].CustomerEmail }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- 付款資料 -->
+                <div id="_payment_data" class="content_box border">
+                    <div class="title">
+                        <h2>付款資料</h2>
+                        <select id="payment-status" class="select" onchange="updateStatus('PaymentStatusID', this.value)">
+                            <option value="default" selected>- 更改付款狀態 -</option>
+                            <option value="1" {% if order.PaymentStatusID == 1 %}selected{% endif %}>未付款</option>
+                            <option value="2" {% if order.PaymentStatusID == 2 %}selected{% endif %}>已付款</option>
+                            <option value="3" {% if order.PaymentStatusID == 3 %}selected{% endif %}>已取消</option>
+                            <option value="4" {% if order.PaymentStatusID == 4 %}selected{% endif %}>已退款</option>
+                        </select>
+                    </div>
+                    <div class="content">
+                        <div class="box">
+                            <div class="flex">
+                                <div class="flex_left">
+                                    <p>付款狀態: </p>
+                                </div>
+                                <div class="flex_right">
+                                    <p class="{% if order.PaymentStatusID == 1 %}status_unpaid{% elif order.PaymentStatusID == 2 %}status_paid{% elif order.PaymentStatusID == 3 %}status_cancel{% elif order.PaymentStatusID == 4 %}status_refund{% endif %}">
+                                        {% if order.PaymentStatusID == 1 %}未付款
+                                        {% elif order.PaymentStatusID == 2 %}已付款
+                                        {% elif order.PaymentStatusID == 3 %}已取消
+                                        {% elif order.PaymentStatusID == 4 %}已退款
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box">
+                            <div class="flex">
+                                <div class="flex_left">
+                                    <p>付款帳號: </p>
+                                </div>
+                                <div class="flex_right">
+                                    <p id="payment-account" class="value">{{ order_details[0].RemittanceCode if order_details else 'N/A' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- 配送資料 -->
+                <div id="_delivery_data" class="content_box border">
+                    <div class="title">
+                        <h2>配貨資料</h2>
+                        <select id="delivery-status" class="select" onchange="updateStatus('DeliveryStatusID', this.value)">
+                            <option value="default" selected>- 更改配送狀態 -</option>
+                            <option value="1" {% if order.DeliveryStatusID == 1 %}selected{% endif %}>備貨中</option>
+                            <option value="2" {% if order.DeliveryStatusID == 2 %}selected{% endif %}>處理中</option>
+                            <option value="3" {% if order.DeliveryStatusID == 3 %}selected{% endif %}>已發貨</option>
+                            <option value="4" {% if order.DeliveryStatusID == 4 %}selected{% endif %}>已送達</option>
+                            <option value="5" {% if order.DeliveryStatusID == 5 %}selected{% endif %}>已退回</option>
+                            <option value="6" {% if order.DeliveryStatusID == 6 %}selected{% endif %}>已取消</option>
+                        </select>
+                    </div>
+                    <div class="content">
+                        <div class="box">
+                            <div class="flex">
+                                <div class="flex_left">
+                                    <p>配送狀態: </p>
+                                </div>
+                                <div class="flex_right">
+                                    <p class="{% if order.DeliveryStatusID == 1 %}status_handling{% elif order.DeliveryStatusID == 2 %}status_pending{% elif order.DeliveryStatusID == 3 %}status_shipped{% elif order.DeliveryStatusID == 4 %}status_arrived{% elif order.DeliveryStatusID == 5 %}status_return{% elif order.DeliveryStatusID == 6 %}status_cancel{% endif %}">
+                                        {% if order.DeliveryStatusID == 1 %}備貨中
+                                        {% elif order.DeliveryStatusID == 2 %}處理中
+                                        {% elif order.DeliveryStatusID == 3 %}已發貨
+                                        {% elif order.DeliveryStatusID == 4 %}已送達
+                                        {% elif order.DeliveryStatusID == 5 %}已退回
+                                        {% elif order.DeliveryStatusID == 6 %}已取消
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box">
+                            <div class="flex">
+                                <div class="flex_left">
+                                    <p>送達日期: </p>
+                                </div>
+                                <div class="flex_right">
+                                    <p id="delivery-date" class="value">{{ order.delivery_date.strftime('%Y-%m-%d %H:%M:%S') if order.delivery_date else 'N/A' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box">
+                            <div class="flex">
+                                <div class="flex_left">
+                                    <p>收件人: </p>
+                                </div>
+                                <div class="flex_right">
+                                    <p id="recipient-name" class="value">{{ order_details[0].ReceiverName if order_details else 'N/A' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box">
+                            <div class="flex">
+                                <div class="flex_left">
+                                    <p>收件人電話: </p>
+                                </div>
+                                <div class="flex_right">
+                                    <p id="recipient-phone" class="value">{{ order_details[0].ReceiverPhone if order_details else 'N/A' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box">
+                            <div class="flex">
+                                <div class="flex_left">
+                                    <p>收件人地址: </p>
+                                </div>
+                                <div class="flex_right">
+                                    <p id="recipient-address" class="value">{{ order_details[0].ShippingAddress if order_details else 'N/A' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="_product_info" class="content_box border">
+              <div class="title">
+                <h2>商品資料</h2>
+              </div>
+              <div class="content">
+                {% for item in order_details %}
+                <div class="product-box">
+                  <div class="product-header">
+                    <div class="product-image">
+                      {% if item.ProductImage %}
+                        <img src="{{ url_for('static', filename='uploads/' + item.ProductImage) }}" alt="{{ item.ProductName }}">
+                      {% else %}
+                        <img src="{{ url_for('static', filename='uploads/default-image.png') }}" alt="預設圖片">
+                      {% endif %}
+                    </div>
+                    <div class="product-info">
+                      <h3>{{ item.ProductName }}</h3>
+                    </div>
+                  </div>
+                  <div class="product-details">
+                    <p>{{ '{:.2f}'.format(item.UnitPrice) }} x {{ item.Quantity }} = {{ '{:.2f}'.format(item.TotalPrice) }}</p>
+                  </div>
+                </div>
+                {% endfor %}
+              <hr>
+              </div>
+              <!-- 小記、運費、總計 -->
+                <div class="summary">
+                    <div class="flex between mx-10">
+                        <div>
+                            <p style="font-size: 1.2em;">商品小計</p>
+                        </div>
+                        <div class="center flex price">
+                            <p style="font-size: 1.2em;">NT$ {{ '{:.2f}'.format(order.Subtotal) }}</p>
+                        </div>
+                    </div>
+                    <div class="flex between mx-10">
+                        <div>
+                            <p style="font-size: 1.2em;">運費</p>
+                        </div>
+                        <div class="center flex price">
+                            <p style="font-size: 1.2em;">NT$ {{ '{:.2f}'.format(order.ShippingFee) }}</p>
+                        </div>
+                    </div>
+                    <div class="flex between mx-10">
+                        <div>
+                            <p style="font-size: 1.2em;">總計</p>
+                        </div>
+                        <div class="center flex price">
+                            <p style="font-size: 1.2em;">NT$ {{ '{:.2f}'.format(order.TotalPrice) }}</p>
+                        </div>
+                    </div>
+                </div>
+
+
+    <script>
+        function updateStatus(statusField, newValue) {
+            const orderId = document.getElementById('order-id').innerText;
+    
+            fetch('/update_order_status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    order_id: orderId,
+                    status_type: statusField,
+                    status: newValue
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                if (data.success) {
+                    alert('更新成功');
+                } else {
+                    alert('更新失敗: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('發生錯誤');
+            });
+        }
+    
+        function fetchOrders(page = 1, status = '', search = '') {
+            document.getElementById('order_list').innerHTML = '<p>正在加載...</p>';
+    
+            fetch(`/api/orders?page=${page}&status=${status}&search=${search}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('網絡錯誤');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('order_list').innerHTML = '';
+    
+                    data.orders.forEach(order => {
+                        const orderElement = document.createElement('div');
+                        orderElement.classList.add('row');
+    
+                        orderElement.innerHTML = `
+                            <div class="th">${order.OrderID}</div>
+                            <div class="td">${order.CustomerName}</div>
+                            <div class="td">${order.TotalPrice}</div>
+                            <div class="td">${order.status}</div>
+                            <div class="td">
+                                <a href="/order_detail/${order.order_id}">查看詳情</a>
+                            </div>
+                        `;
+    
+                        document.getElementById('order_list').appendChild(orderElement);
+                    });
+    
+                    const paginationElement = document.getElementById('pagination');
+                    paginationElement.innerHTML = '';
+    
+                    for (let i = 1; i <= data.total_pages; i++) {
+                        const pageItem = document.createElement('li');
+                        pageItem.textContent = i;
+                        if (i === data.current_page) {
+                            pageItem.classList.add('current');
+                        } else {
+                            const link = document.createElement('a');
+                            link.textContent = i;
+                            link.href = '#';
+                            link.onclick = () => fetchOrders(i, status, search);
+                            pageItem.appendChild(link);
+                        }
+                        paginationElement.appendChild(pageItem);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching orders:', error);
+                    document.getElementById('order_list').innerHTML = '<p>載入訂單時發生錯誤。</p>';
+                });
+        }
+    
+        function fetchProductDetails(orderId) {
+            fetch(`/api/order_products?order_id=${orderId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('網絡錯誤');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('product_list').innerHTML = '';
+    
+                    data.products.forEach(product => {
+                        const productElement = document.createElement('div');
+                        productElement.classList.add('row');
+    
+                        productElement.innerHTML = `
+                            <div class="td">${product.product_id}</div>
+                            <div class="td">${product.product_name}</div>
+                            <div class="td">${product.quantity}</div>
+                            <div class="td">${product.price}</div>
+                        `;
+    
+                        document.getElementById('product_list').appendChild(productElement);
+                    });
+                })
+                .catch(error => console.error('Error fetching product details:', error));
+        }
+    
+        function searchOrders() {
+            const search = document.getElementById('order_search').value;
+            const status = document.getElementById('order_status').value;
+            fetchOrders(1, status, search);
+        }
+    
+        function filterOrders() {
+            const status = document.getElementById('order_status').value;
+            fetchOrders(1, status);
+        }
+    
+        window.onload = function() {
+            fetchOrders();
+        }
+        
+        function toggleMenu() {
+            var menu = document.getElementById('_main_menu');
+            menu.classList.toggle('active');
+       };
+    </script>
+
+</body>
+
+</html>

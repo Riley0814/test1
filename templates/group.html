@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>團購專區</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #fff;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            width: 180px;
+            height: 70px;
+            margin-right: 20px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-right: 20px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 18px;
+        }
+        .icons {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .icons a {
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        
+        .icons img {
+            width: 24px;
+            height: 24px;
+        }  
+
+        main {
+            padding: 20px;
+        }
+
+        .products-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 24px;
+            color: #b35e59;
+            margin-bottom: 10px;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+            margin-bottom: 40px; /* 增加底部邊距 */
+        }
+
+        .product-item {
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .product-item img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .pagination {
+            text-align: center;
+            margin-bottom: 40px; /* 增加底部邊距 */
+        }
+
+        .pagination a {
+            text-decoration: none;
+            color: #d2958a;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            margin: 0 5px;
+            border-radius: 5px;
+        }
+
+        .pagination a.active {
+            background-color: #d2958a;
+            color: #fff;
+            border-color: #d2958a;
+        }
+
+        footer {
+            background-color: #fff;
+            padding: 15px;
+            text-align: center;
+            border-top: 1px solid #ddd;
+        }
+
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo h2 {
+            text-align: center;
+            color: #7cbd8b;
+        }
+
+        .footer-links a {
+            margin-left: 20px;
+        }
+
+        .footer-links img {
+            width: 24px;
+            height: 24px;
+        }
+
+        footer h3 {
+            margin: 10px 0 0;
+            color: #6d6d6d;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        footer h4 {
+            margin: 10px 0 0;
+            color: #838383;
+            font-size: 12px;
+            text-align: left;
+        }
+
+        footer p {
+            margin: 10px 0 0;
+            color: #9b9b9b;
+            font-size: 10px;
+        }
+        .user-popup {
+            display: none;
+            position: absolute;
+            top: 60px; /* 調整位置 */
+            right: 20px; /* 調整位置 */
+            width: 150px;
+            background-color: #e1e9f4;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            z-index: 1000;
+        }
+        .user-popup a {
+            display: block;
+            color: #5E6D79;
+            text-decoration: none;
+            padding: 5px 5px;
+            text-align: center;
+
+        }
+        .user-popup a:hover {
+            background-color: #E8EAE6;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #E8EAE6;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            color: #5E6D79;
+        }
+
+        .btn:hover {
+            background-color: #E8EAE6;
+        }
+
+        .logout-button {
+            display: block;
+            width: 100px;
+            margin: 10px auto;
+            padding: 5px;
+            background-color: #d3d7e0;
+            color: #000;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+        }
+
+        .products-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 每排顯示四個 */
+            gap: 20px;
+            width: 100%;
+            margin-bottom: 40px; /* 增加底部邊距 */
+        }
+
+        .product-item {
+            background-color: #fff;
+            padding: 10px; /* 減少 padding 值，降低高度 */
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            font-size: 12px;
+        }
+
+        .product-item h2 {
+            font-size: 16px; /* 可以調整字體大小 */
+            max-width: 100%; /* 限制標題的最大寬度 */
+            word-break: break-word; /* 確保長單詞換行 */
+            overflow-wrap: break-word; /* 確保長單詞在邊界內換行 */
+            margin: 0; /* 去掉標題外邊距 */
+            text-align: center; /* 讓文字置中對齊 */
+        }
+        @media (max-width: 1200px) {
+            .products {
+                grid-template-columns: repeat(3, 1fr); /* 螢幕寬度小於 1200px 時，每行顯示三個 */
+            }
+        }
+        
+        @media (max-width: 800px) {
+            .products {
+                grid-template-columns: repeat(2, 1fr); /* 螢幕寬度小於 800px 時，每行顯示兩個 */
+            }
+        }
+        
+        @media (max-width: 500px) {
+            .products {
+                grid-template-columns: 1fr; /* 螢幕寬度小於 500px 時，每行顯示一個 */
+            }
+        }
+
+        .product-carousel {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            background-color: #f0f0f0;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        
+        .carousel-images {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .carousel-images img {
+            width: 100%;
+            height: 100%;
+            object-fit: fill; /* 讓圖片填滿容器 */
+            flex-shrink: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .carousel-buttons {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            z-index: 15; /* 確保在圖片和「售完」標籤上方 */
+        }
+        
+        .carousel-buttons button {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: #fff;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .search-form {
+            position: absolute;
+            top: 0;
+            right: 100%; /* 初始位置在圖標左側外面 */
+            display: flex; /* 使用 flex 來排版 */
+            align-items: center;
+            transform: translateX(-10px); /* 初始位置稍微向左偏移 */
+            transition: transform 0.8s ease, opacity 0.8s ease; /* 設定過渡時間 */
+            opacity: 0;
+            z-index: 10; /* 確保搜尋欄位在其他元素之上 */
+        }
+        
+        .search-form input[type="text"] {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 5px;
+        }
+        
+        .search-form button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .search-form button:hover {
+            background-color: #0056b3;
+        }
+        
+        /* 當滑鼠移到搜尋圖標或搜尋欄位時，觸發搜尋欄位和按鈕滑出動畫 */
+        .icons:hover .search-form,
+        .search-form.active {
+            transform: translateX(0); /* 搜尋欄位從左側滑出 */
+            opacity: 1; /* 確保搜尋欄位可見 */
+        }
+        
+        /* 當搜尋欄位失去焦點時，滑回效果 */
+        .search-form.hidden {
+            transform: translateX(-100%); /* 從圖標左側滑回去 */
+            opacity: 0;
+            display: none; /* 確保搜尋欄位在動畫結束後不顯示 */
+        }
+
+
+        .cart-icon {
+            position: relative;
+            display: inline-block;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: #ff0000;
+            color: #fff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .ended-section {
+            margin-bottom: 40px; /* 增加底部邊距 */
+        }
+        /* 售完標籤 */
+        .out-of-stock-label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(255, 0, 0, 0.7);
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo-section">
+                <a href="{{ url_for('home') }}"><img src="{{ url_for('static', filename='images/logo_home.png') }}" alt="Tea Lounge Logo" class="logo"></a>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                   <li><a href="{{ url_for('home') }}">所有商品</a></li>
+                   <li><a href="{{ url_for('group') }}">團購專區</a></li>
+                   <li><a href="{{ url_for('about') }}">關於我們</a></li>
+                   <li><a href="{{ url_for('contact') }}">聯絡我們</a></li>
+                </ul>
+            </nav>
+            <div class="icons">
+                <!-- Search Icon inside an anchor tag -->
+                <a href="#" class="search-icon">
+                    <img src="{{ url_for('static', filename='images/search.png') }}" alt="Search Icon" style="width: 24px; height: 24px;">
+                </a>
+                
+                <!-- Search Form -->
+                <form class="search-form" action="{{ url_for('search') }}" method="GET">
+                    <input type="text" name="query" placeholder="搜尋商品..." value="{{ request.args.get('query', '') }}">
+                    <input type="hidden" name="page_type" value="group">
+                    <button type="submit">搜尋</button>
+                </form>
+                <a href="{{ url_for('cart') }}" class="cart-icon">
+                    <img src="{{ url_for('static', filename='images/cart.png') }}" alt="Cart Icon">
+                    <span class="cart-badge" id="cart-count"></span>
+                </a>
+                {% if current_user.is_authenticated %}
+                <a onclick="toggleUserPopup()"><img src="{{ url_for('static', filename='images/user.png') }}" alt="User Icon"></a>
+            {% else %}
+                <a href="/login"><img src="{{ url_for('static', filename='images/user.png') }}" alt="User Icon"></a>
+            {% endif %}
+        </div>
+        </header>
+       
+        <!-- 用戶彈出框 -->
+        <div id="userPopup" class="user-popup" style="display: none;">
+            <a href="/member">會員資料</a>
+            <a href="/order">訂單查詢</a>
+            <hr>
+            <form action="{{ url_for('logout') }}" method="post">
+                <button type="submit" class="btn">登出</button>
+            </form> 
+        </div>
+    <main>
+    <section class="products-container">
+        <div class="section-title">團購限時優惠區</div>
+        <div class="products">
+            {% for product in available_products %}
+            <div class="product-item">
+                <div class="product-carousel">
+                    <div class="carousel-images">
+                        {% for image in product.images %}
+                        <img src="{{ url_for('static', filename='uploads/' + image.ImagePath) }}" alt="{{ product.ProductName }}">
+                        {% endfor %}
+                    </div>
+                    <div class="carousel-buttons">
+                        <button class="prev" onclick="prevSlide(this)">&#10094;</button>
+                        <button class="next" onclick="nextSlide(this)">&#10095;</button>
+                    </div>
+                </div>
+                <h2>{{ product.ProductName }}</h2>
+                <p>${{ product.Price }}</p>
+                <a href="{{ url_for('product_detail', product_id=product.ProductID) }}" class="view-details">查看詳情</a>
+                <a href="{{ url_for('add_to_cart', product_id=product.ProductID) }}" class="order-button {{ 'disabled' if not product.is_available }}"
+                   {% if not product.is_available %}
+                   onclick="event.preventDefault();"
+                   {% endif %}>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+            <div class="pagination">
+                {% if available_pagination.has_prev %}
+                <a href="{{ url_for('search', query=request.args.get('query', ''), page=available_pagination.prev_num, page_type='group') }}">&laquo; 上一頁</a>
+                {% endif %}
+                {% for page_num in available_pagination.iter_pages() %}
+                {% if page_num %}
+                <a href="{{ url_for('search', query=request.args.get('query', ''), page=page_num, page_type='group') }}">{{ page_num }}</a>
+                {% endif %}
+                {% endfor %}
+                {% if available_pagination.has_next %}
+                <a href="{{ url_for('search', query=request.args.get('query', ''), page=available_pagination.next_num, page_type='group') }}">下一頁 &raquo;</a>
+                {% endif %}
+            </div>
+       
+            <div class="section-title ended">活動已結束</div>
+            <div class="products">
+                {% for product in unavailable_products %}
+                <div class="product-item">
+                    <div class="product-carousel">
+                        <div class="carousel-images">
+                            {% for image in product.images %}
+                            <img src="{{ url_for('static', filename='uploads/' + image.ImagePath) }}" alt="{{ product.ProductName }}">
+                            {% endfor %}
+                        </div>
+                        <div class="carousel-buttons">
+                            <button class="prev">&#10094;</button>
+                            <button class="next">&#10095;</button>
+                        </div>
+                        {% if not product.is_available %}
+                        <div class="out-of-stock-label">已售完</div>
+                        {% endif %}                        
+                    </div>
+                    <h2>{{ product.ProductName }}</h2>
+                    <p>${{ product.Price }}</p>
+                    <a href="{{ url_for('product_detail', product_id=product.ProductID) }}" class="view-details">查看詳情</a>
+                </div>
+                {% endfor %}
+            </div>
+
+            
+            <div class="pagination">
+                {% if unavailable_pagination.has_prev %}
+                <a href="{{ url_for('group', page=unavailable_pagination.prev_num) }}">&laquo; 上一頁</a>
+                {% endif %}
+                {% for page_num in unavailable_pagination.iter_pages() %}
+                {% if page_num %}
+                <a href="{{ url_for('group', page=page_num) }}" class="{% if page_num == unavailable_pagination.page %}active{% endif %}">{{ page_num }}</a>
+                {% endif %}
+                {% endfor %}
+                {% if unavailable_pagination.has_next %}
+                <a href="{{ url_for('group', page=unavailable_pagination.next_num) }}">下一頁 &raquo;</a>
+                {% endif %}
+            </div>
+            
+    </section>
+    </main>
+    
+    <footer>
+        <div class="footer-container">
+            <div class="footer-logo">
+                <h2>Tea Lounge</h2>
+                <h3>聯絡資訊</h3>
+                <h4>
+                    客服專線：0981-509-558<br>
+                    信箱：rcdesign03@gmail.com
+                </h4>
+            </div>
+            <div class="footer-links">
+                <a href="https://www.facebook.com/teacafelounge"><img src="{{ url_for('static', filename='images/FB.png') }}" alt="Facebook Icon"></a>
+                <a href="https://www.instagram.com/food.is.shiny?igsh=MXZ5anJ2cmx1aHZlbw=="><img src="{{ url_for('static', filename='images/IG.png') }}" alt="Instagram Icon"></a>
+                <a href="https://lin.ee/f2KTSUE"><img src="{{ url_for('static', filename='images/LINE.png') }}" alt="LINE Icon"></a>
+            </div>
+        </div>
+        <p>©Tea Lounge 時尚品茶餐飲</p>
+    </footer>
+
+    <!-- JavaScript 代碼 -->
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // 更新購物車徽章顯示
+        const cartCountElement = document.getElementById('cart-count');
+    
+        const updateCartBadge = (itemCount) => {
+            cartCountElement.textContent = itemCount > 0 ? itemCount : '';
+            cartCountElement.style.display = itemCount > 0 ? 'block' : 'none';
+        };
+    
+        const calculateCartItemCount = () => {
+            let totalQuantity = 0;
+    
+            try {
+                // 獲取 local storage 購物車數據
+                const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                
+                // 計算所有商品的總數量
+                cart.forEach(item => {
+                    if (item.quantity) {
+                        totalQuantity += item.quantity;
+                    }
+                });
+            } catch (error) {
+                console.error('Error parsing cart data from local storage:', error);
+            }
+    
+            return totalQuantity;
+        };
+    
+        // 計算購物車數量並更新徽章
+        const itemCount = calculateCartItemCount();
+        updateCartBadge(itemCount);
+    
+        // 旋轉木馬功能
+        const carousels = document.querySelectorAll('.product-carousel');
+        carousels.forEach(carousel => {
+            const prevBtn = carousel.querySelector('.prev');
+            const nextBtn = carousel.querySelector('.next');
+            const carouselImages = carousel.querySelector('.carousel-images');
+            let currentIndex = 0;
+    
+            function showImage(index) {
+                const width = carouselImages.clientWidth;
+                carouselImages.style.transform = `translateX(-${index * width}px)`;
+            }
+    
+            nextBtn.addEventListener('click', function() {
+                if (currentIndex < carouselImages.children.length - 1) {
+                    currentIndex++;
+                } else {
+                    currentIndex = 0;
+                }
+                showImage(currentIndex);
+            });
+    
+            prevBtn.addEventListener('click', function() {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                } else {
+                    currentIndex = carouselImages.children.length - 1;
+                }
+                showImage(currentIndex);
+            });
+    
+            // 自動切換圖片
+            setInterval(function() {
+                if (currentIndex < carouselImages.children.length - 1) {
+                    currentIndex++;
+                } else {
+                    currentIndex = 0;
+                }
+                showImage(currentIndex);
+            }, 3000); // 每3秒切換一次
+        });
+    
+        const searchIcon = document.querySelector('.search-icon');
+        const searchForm = document.querySelector('.search-form');
+    
+        if (searchIcon && searchForm) {
+            searchIcon.addEventListener('click', function(event) {
+                event.preventDefault();
+                searchForm.classList.toggle('active');
+            });
+    
+            // 當滑鼠移開搜尋圖標時，搜尋欄位慢慢滑回去
+            document.addEventListener('mousemove', function(event) {
+                const iconRect = searchIcon.getBoundingClientRect();
+                const formRect = searchForm.getBoundingClientRect();
+                if (!iconRect.contains(event.clientX, event.clientY) && !formRect.contains(event.clientX, event.clientY)) {
+                    searchForm.classList.remove('active');
+                }
+            });
+        }
+        // 用戶彈出框顯示切換
+        const userPopup = document.getElementById('userPopup');
+        if (userPopup) {
+            window.toggleUserPopup = function() {
+                userPopup.style.display = userPopup.style.display === 'none' || userPopup.style.display === '' ? 'block' : 'none';
+            };
+        }
+    
+        // 登出功能
+        window.logout = function() {
+            // 這裡放置登出邏輯
+            console.log('登出功能尚未實作');
+        };
+    });
+    </script>
+
+</body>
+</html>

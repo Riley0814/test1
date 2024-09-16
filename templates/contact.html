@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>關於我們</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #fff;
+        }
+        .logo-section {
+            display: flex;
+            align-items: center;
+        }
+        .logo {
+            width: 180px;
+            height: 70px;
+            margin-right: 20px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+        nav ul li {
+            margin-right: 20px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 18px;
+        }
+        .icons a {
+            margin-left: 20px;
+            cursor: pointer;
+        }
+        .icons img {
+            width: 24px;
+            height: 24px;
+        }
+        .user-popup {
+            display: none;
+            position: absolute;
+            top: 60px; /* 調整位置 */
+            right: 20px; /* 調整位置 */
+            width: 150px;
+            background-color: #e1e9f4;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            z-index: 1000;
+        }
+        .user-popup a {
+            display: block;
+            color: #5E6D79;
+            text-decoration: none;
+            padding: 5px 5px;
+            text-align: center;
+
+        }
+        .user-popup a:hover {
+            background-color: #E8EAE6;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #E8EAE6;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            color: #5E6D79;
+        }
+        .btn:hover {
+            background-color: #E8EAE6;
+        }
+        .icons img {
+            cursor: pointer;
+        }
+        .logout-button {
+            display: block;
+            width: 100px;
+            margin: 10px auto;
+            padding: 5px;
+            background-color: #d3d7e0;
+            color: #000;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+        }
+        footer {
+            background-color: #fff;
+            padding: 15px;
+            text-align: center;
+            border-top: 1px solid #ddd;
+        }
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer-logo h2 {
+            text-align: center;
+            color: #7cbd8b;
+        }
+        .footer-links a {
+            margin-left: 20px;
+        }
+        .footer-links img {
+            width: 24px;
+            height: 24px;
+        }
+        footer h3 {
+            margin: 10px 0 0;
+            color: #6d6d6d;
+            font-size: 13px;
+            text-align: left;
+        }
+        footer h4 {
+            margin: 10px 0 0;
+            color: #838383;
+            font-size: 12px;
+            text-align: left;
+        }
+        footer p {
+            margin: 10px 0 0;
+            color: #9b9b9b;
+            font-size: 10px;
+        }
+        .background-container {
+            position: relative;
+            text-align: center;
+            color: white;
+        }
+        .background-image img {
+            width: 100%;
+            height: auto;
+        }
+        .background-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ffffff;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo-section">
+                <a href="{{ url_for('home') }}"><img src="{{ url_for('static', filename='images/logo_home.png') }}" alt="Tea Lounge Logo" class="logo"></a>
+            </div>
+             <nav>
+                 <ul class="nav-links">
+                    <li><a href="{{ url_for('home') }}">所有商品</a></li>
+                    <li><a href="{{ url_for('group') }}">團購專區</a></li>
+                    <li><a href="{{ url_for('about') }}">關於我們</a></li>
+                    <li><a href="{{ url_for('contact') }}">聯絡我們</a></li>
+                 </ul>
+             </nav>
+            <div class="icons">
+                <a href="{{ url_for('cart') }}"><img src="{{ url_for('static', filename='images/cart.png') }}" alt="Cart Icon"></a>
+                {% if current_user.is_authenticated %}
+                <a onclick="toggleUserPopup()"><img src="{{ url_for('static', filename='images/user.png') }}" alt="User Icon"></a>
+            {% else %}
+                <a href="/login"><img src="{{ url_for('static', filename='images/user.png') }}" alt="User Icon"></a>
+            {% endif %}
+        </div>
+    </header>
+
+        <!-- 用戶彈出框 -->
+    <div id="userPopup" class="user-popup" style="display: none;">
+        <a href="/member">會員資料</a>
+        <a href="/order">訂單查詢</a>
+        <hr>
+        <form action="{{ url_for('logout') }}" method="post">
+            <button type="submit" class="btn">登出</button>
+        </form> 
+    </div>
+
+    <!-- 主內容 -->
+    <div class="background-container">
+        <div class="background-image">
+            <img src="{{ url_for('static', filename='images/background.png') }}" alt="聯絡我們">
+        </div>
+        <div class="background-text">
+            <h2>聯絡我們</h2>
+            <p>Tea Lounge 時尚品茶餐飲 ｜ 無麩質、無精緻糖 ｜ 無麩菓手作cake ｜ 小零嘴 ｜ Dilmah帝瑪茶 <br><br>=> 飲食是日常中最重要的事<br>=> Tea Lounge 關心您的健康<br><br>客服專線：0981-509-558<br>信箱：rcdesign03@gmail.com</p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-logo">
+                <h2>Tea Lounge</h2>
+                <h3>聯絡資訊</h3>
+                <h4>
+                客服專線：0981-509-558<br>
+                信箱：rcdesign03@gmail.com</h4>
+            </div>
+            <div class="footer-links">
+                <a href="https://www.facebook.com/teacafelounge"><img src="static/images/FB.png" alt="Facebook Icon"></a>
+                <a href="https://www.instagram.com/food.is.shiny?igsh=MXZ5anJ2cmx1aHZlbw=="><img src="static/images/IG.png" alt="Instagram Icon"></a>
+                <a href="https://lin.ee/f2KTSUE"><img src="static/images/LINE.png" alt="LINE Icon"></a>
+            </div>
+        </div>
+    </footer>
+    <script>
+       function toggleUserPopup() {
+           var popup = document.getElementById('userPopup');
+           popup.style.display = (popup.style.display === 'block') ? 'none' : 'block';
+       }
+       
+       function logout() {
+           // 假設你有一個登出路由 /logout
+           window.location.href = '/logout';
+       }    
+    </script>
+</body>
+</html>

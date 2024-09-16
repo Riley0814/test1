@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tea Lounge</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #fff;
+        }
+        .logo-section {
+            display: flex;
+            align-items: center;
+        }
+        .logo {
+            width: 180px;
+            height: 70px;
+            margin-right: 20px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+        nav ul li {
+            margin-right: 20px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 18px;
+        }
+        .icons {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .icons a {
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        
+        .icons img {
+            width: 24px;
+            height: 24px;
+        }   
+        main {
+            display: flex;
+            padding: 20px;
+        }
+        aside {
+            margin-right: 20px;
+            width: 200px;
+        }
+        aside h2 {
+            font-size: 18px;
+            color: #6676a2;
+            position: relative;
+            text-align: center;
+            margin: 20px 0;
+        }
+        aside h2::before,
+        aside h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 1px;
+            background-color: #6676a2;
+        }
+        aside h2::before {
+            top: -10px;
+        }
+        aside h2::after {
+            bottom: -10px;
+        }
+        .category-list {
+            list-style: none;
+            padding: 0;
+        }
+        .category-list li {
+            margin-bottom: 10px;
+        }
+        .category-list li a {
+            text-decoration: none;
+            color: #d2958a;
+            font-size: 18px;
+            font-family: var(--font-family-paragraph);
+            font-weight: bold;
+        }
+
+        .products-container {
+            width: 80%;
+            max-width: 1500px;
+            margin: 0 auto;
+            padding-right: 30px; /* 右側增加10px內部空間 */
+            margin-left: -10px; /* 向左移動10px */
+        }
+
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+        }
+        .product-item {
+            background-color: #fff;
+            padding: 10px; /* 減少 padding 值，降低高度 */
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            font-size: 12px;
+        }
+        
+        .product-item h2 {
+            font-size: 16px; /* 可以調整字體大小 */
+            max-width: 100%; /* 限制標題的最大寬度 */
+            word-break: break-word; /* 確保長單詞換行 */
+            overflow-wrap: break-word; /* 確保長單詞在邊界內換行 */
+            margin: 0; /* 去掉標題外邊距 */
+            text-align: center; /* 讓文字置中對齊 */
+        }     
+        /* 產品輪播圖 */
+        .product-carousel {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            background-color: #f0f0f0;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        
+        .carousel-images {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .carousel-images img {
+            width: 100%;
+            height: 100%;
+            object-fit: fill; /* 讓圖片填滿容器 */
+            flex-shrink: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .carousel-buttons {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            z-index: 15; /* 確保在圖片和「售完」標籤上方 */
+        }
+        
+        .carousel-buttons button {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: #fff;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+
+        .cart table {
+            width: 100%;
+            max-width: 800px;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .cart table, .cart th, .cart td {
+            border: 1px solid #ccc;
+        }
+        .cart th, .cart td {
+            padding: 10px;
+            text-align: center;
+        }
+        .checkout {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            max-width: 800px;
+        }
+        .checkout span {
+            margin-right: 20px;
+        }
+        .checkout button {
+            padding: 10px 20px;
+            background-color: #4a4a4a;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        .pagination {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .pagination a {
+            text-decoration: none;
+            color: #d2958a;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            margin: 0 5px;
+            border-radius: 5px;
+        }
+        .pagination a.active {
+            background-color: #d2958a;
+            color: #fff;
+            border-color: #d2958a;
+        }
+        footer {
+            background-color: #fff;
+            padding: 15px;
+            text-align: center;
+            border-top: 1px solid #ddd;
+        }
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer-logo h2 {
+            text-align: center;
+            color: #7cbd8b;
+        }
+        .footer-links a {
+            margin-left: 20px;
+        }
+        .footer-links img {
+            width: 24px;
+            height: 24px;
+        }
+        footer h3 {
+            margin: 10px 0 0;
+            color: #6d6d6d;
+            font-size: 13px;
+            text-align: left;
+        }
+        footer h4 {
+            margin: 10px 0 0;
+            color: #838383;
+            font-size: 12px;
+            text-align: left;
+        }
+        footer p {
+            margin: 10px 0 0;
+            color: #9b9b9b;
+            font-size: 10px;
+        }
+        .row img.out-of-stock {
+          opacity: 0.5; /* 當商品售完時，圖片顯示為半透明 */
+        }
+        
+        
+        /* 產品圖片樣式 */
+        .row img {
+          max-width: 100px; /* 控制圖片的最大寬度 */
+          max-height: 100px; /* 控制圖片的最大高度 */
+          object-fit: contain; /* 讓圖片完整顯示且不被裁切 */
+          transition: opacity 0.3s; /* 圖片淡化效果過渡 */
+        }
+
+        .out-of-stock-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 24px;
+            z-index: 10;
+        }
+        .search-form {
+            position: absolute;
+            top: 0;
+            right: 100%; /* 初始位置在圖標左側外面 */
+            display: flex; /* 使用 flex 來排版 */
+            align-items: center;
+            transform: translateX(-10px); /* 初始位置稍微向左偏移 */
+            transition: transform 0.8s ease, opacity 0.8s ease; /* 設定過渡時間 */
+            opacity: 0;
+            z-index: 10; /* 確保搜尋欄位在其他元素之上 */
+        }
+        
+        .search-form input[type="text"] {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 5px;
+        }
+        
+        .search-form button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .search-form button:hover {
+            background-color: #0056b3;
+        }
+        
+        /* 當滑鼠移到搜尋圖標或搜尋欄位時，觸發搜尋欄位和按鈕滑出動畫 */
+        .icons:hover .search-form,
+        .search-form.active {
+            transform: translateX(0); /* 搜尋欄位從左側滑出 */
+            opacity: 1; /* 確保搜尋欄位可見 */
+        }
+        
+        /* 當搜尋欄位失去焦點時，滑回效果 */
+        .search-form.hidden {
+            transform: translateX(-100%); /* 從圖標左側滑回去 */
+            opacity: 0;
+            display: none; /* 確保搜尋欄位在動畫結束後不顯示 */
+        }
+
+        .user-popup {
+            display: none;
+            position: absolute;
+            top: 60px; /* 調整位置 */
+            right: 20px; /* 調整位置 */
+            width: 150px;
+            background-color: #e1e9f4;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            z-index: 1000;
+        }
+        .user-popup a {
+            display: block;
+            color: #5E6D79;
+            text-decoration: none;
+            padding: 5px 5px;
+            text-align: center;
+
+        }
+        .user-popup a:hover {
+            background-color: #E8EAE6;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #E8EAE6;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            color: #5E6D79;
+        }
+        .btn:hover {
+            background-color: #E8EAE6;
+        }
+        .cart-icon {
+            position: relative;
+            display: inline-block;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: #ff0000; /* 設置徽章背景顏色 */
+            color: #fff; /* 設置徽章文字顏色 */
+            border-radius: 50%;
+            width: 20px; /* 設置徽章的寬度 */
+            height: 20px; /* 設置徽章的高度 */
+            text-align: center;
+            line-height: 20px; /* 垂直居中文字 */
+            font-size: 12px; /* 設置徽章中文字的大小 */
+            font-weight: bold;
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo-section">
+                <a href="{{ url_for('home') }}"><img src="{{ url_for('static', filename='images/logo_home.png') }}" alt="Tea Lounge Logo" class="logo"></a>
+            </div>
+             <nav>
+                 <ul class="nav-links">
+                    <li><a href="{{ url_for('home') }}">所有商品</a></li>
+                    <li><a href="{{ url_for('group') }}">團購專區</a></li>
+                    <li><a href="{{ url_for('about') }}">關於我們</a></li>
+                    <li><a href="{{ url_for('contact') }}">聯絡我們</a></li>
+                 </ul>
+             </nav>
+            <div class="icons">
+                <!-- Search Icon inside an anchor tag -->
+                <a href="#" class="search-icon">
+                    <img src="{{ url_for('static', filename='images/search.png') }}" alt="Search Icon" style="width: 24px; height: 24px;">
+                </a>
+                
+                <!-- Search Form -->
+                <form class="search-form" action="{{ url_for('search') }}" method="GET">
+                    <input type="text" name="query" placeholder="搜尋商品..." value="{{ request.args.get('query', '') }}">
+                    <input type="hidden" name="page_type" value="home">
+                    <button type="submit">搜尋</button>
+                </form>
+                </form>
+                <a href="{{ url_for('cart') }}" class="cart-icon">
+                    <img src="{{ url_for('static', filename='images/cart.png') }}" alt="Cart Icon">
+                    <span class="cart-badge" id="cart-count"></span>
+                </a>
+                {% if current_user.is_authenticated %}
+                <a onclick="toggleUserPopup()"><img src="{{ url_for('static', filename='images/user.png') }}" alt="User Icon"></a>
+            {% else %}
+                <a href="/login"><img src="{{ url_for('static', filename='images/user.png') }}" alt="User Icon"></a>
+            {% endif %}
+        </div>
+        </header>
+        
+        <!-- 用戶彈出框 -->
+        <div id="userPopup" class="user-popup" style="display: none;">
+            <a href="/member">會員資料</a>
+            <a href="/order">訂單查詢</a>
+            <hr>
+            <form action="{{ url_for('logout') }}" method="post">
+                <button type="submit" class="btn">登出</button>
+            </form> 
+        </div>
+    
+    <main>
+        <aside>
+            <ul class="category-list">
+                <li><a href="#">｜ 常溫-豆製品</a></li>
+                <li><a href="#">｜ 無麩菓手作cake</a></li>
+                <li><a href="#">｜ 無麩菓小零嘴</a></li>
+                <li><a href="#">｜ Dilmah帝瑪茶</a></li>
+            </ul>
+        </aside>
+        <section class="products-container">
+            <div class="products">
+                {% if products %}
+                    {% for product in products %}
+                        {% if product.Status %}
+                            <div class="product-item {{ 'sold-out' if not product.Status }}">
+                                <div class="product-carousel">
+                                    <div class="carousel-images">
+                                        {% for image in product.images %}
+                                            <img src="{{ url_for('static', filename='uploads/' + image.ImagePath) }}" alt="{{ product.ProductName }}">
+                                        {% endfor %}
+                                    </div>
+                                    <div class="carousel-buttons">
+                                        <button class="prev-btn">&#10094;</button>
+                                        <button class="next-btn">&#10095;</button>
+                                    </div>
+                                </div>
+                                {% if not product.Status %}
+                                    <div class="out-of-stock-label">售完</div>
+                                {% endif %}
+                                <h2>{{ product.ProductName }}</h2>
+                                <p>${{ product.Price }}</p>
+                                <a href="{{ url_for('product_detail', product_id=product.ProductID) }}" class="view-details">查看詳情</a>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <p>找不到相關商品。</p>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+        <!-- 分頁控制 -->
+        <div class="pagination">
+            {% if pagination.has_prev %}
+                <a href="{{ url_for('home', query=request.args.get('query', ''), page=pagination.prev_num) }}">&laquo; 上一頁</a>
+            {% endif %}
+            
+            {% for page_num in pagination.iter_pages() %}
+                {% if page_num %}
+                    <a href="{{ url_for('home', query=request.args.get('query', ''), page=page_num) }}" class="{% if pagination.page == page_num %}active{% endif %}">{{ page_num }}</a>
+                {% else %}
+                    <span>...</span>
+                {% endif %}
+            {% endfor %}
+            
+            {% if pagination.has_next %}
+                <a href="{{ url_for('home', query=request.args.get('query', ''), page=pagination.next_num) }}">下一頁 &raquo;</a>
+            {% endif %}
+        </div>
+
+    
+    <footer>
+        <div class="footer-container">
+            <div class="footer-logo">
+                <h2>Tea Lounge</h2>
+                <h3>聯絡資訊</h3>
+                <h4>
+                客服專線：0981-509-558<br>
+                信箱：rcdesign03@gmail.com</h4>
+            </div>
+            <div class="footer-links">
+                <a href="https://www.facebook.com/teacafelounge"><img src="static/images/FB.png" alt="Facebook Icon"></a>
+                <a href="https://www.instagram.com/food.is.shiny?igsh=MXZ5anJ2cmx1aHZlbw=="><img src="static/images/IG.png" alt="Instagram Icon"></a>
+                <a href="https://lin.ee/f2KTSUE"><img src="static/images/LINE.png" alt="LINE Icon"></a>
+            </div>
+        </div>
+        <p>©Tea Lounge 時尚品茶餐飲</p>
+    </footer>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // 更新購物車徽章顯示
+        const cartCountElement = document.getElementById('cart-count');
+    
+        const updateCartBadge = (itemCount) => {
+            cartCountElement.textContent = itemCount > 0 ? itemCount : '';
+            cartCountElement.style.display = itemCount > 0 ? 'block' : 'none';
+        };
+    
+        const calculateCartItemCount = () => {
+            let totalQuantity = 0;
+    
+            try {
+                const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                cart.forEach(item => {
+                    if (item.quantity) {
+                        totalQuantity += item.quantity;
+                    }
+                });
+            } catch (e) {
+                console.error('Error reading cart from localStorage:', e);
+            }
+    
+            updateCartBadge(totalQuantity);
+        };
+    
+        calculateCartItemCount();
+    
+        // 圖片輪播功能
+        document.querySelectorAll('.product-carousel').forEach(carousel => {
+            const images = carousel.querySelector('.carousel-images');
+            const prevBtn = carousel.querySelector('.prev-btn');
+            const nextBtn = carousel.querySelector('.next-btn');
+            
+            let index = 0;
+            const imageCount = images.children.length;
+        
+            const updateCarousel = () => {
+                const offset = -index * 100;
+                images.style.transform = `translateX(${offset}%)`;
+            };
+        
+            prevBtn.addEventListener('click', () => {
+                index = (index > 0) ? index - 1 : imageCount - 1;
+                updateCarousel();
+            });
+        
+            nextBtn.addEventListener('click', () => {
+                index = (index < imageCount - 1) ? index + 1 : 0;
+                updateCarousel();
+            });
+        
+            // 自動切換圖片
+            setInterval(() => {
+                index = (index < imageCount - 1) ? index + 1 : 0;
+                updateCarousel();
+            }, 3000); // 每3秒切換一次
+        
+            updateCarousel(); // 初始化顯示
+        });
+    
+        const searchIcon = document.querySelector('.search-icon');
+        const searchForm = document.querySelector('.search-form');
+    
+        if (searchIcon && searchForm) {
+            searchIcon.addEventListener('click', function(event) {
+                event.preventDefault();
+                searchForm.classList.toggle('active');
+            });
+    
+            // 當滑鼠移開搜尋圖標時，搜尋欄位慢慢滑回去
+            document.addEventListener('mousemove', function(event) {
+                const iconRect = searchIcon.getBoundingClientRect();
+                const formRect = searchForm.getBoundingClientRect();
+                if (!iconRect.contains(event.clientX, event.clientY) && !formRect.contains(event.clientX, event.clientY)) {
+                    searchForm.classList.remove('active');
+                }
+            });
+        }
+    
+        // 用戶彈出窗口控制
+        function toggleUserPopup() {
+            const userPopup = document.getElementById('userPopup');
+            if (userPopup) {
+                userPopup.style.display = userPopup.style.display === 'none' || userPopup.style.display === '' ? 'block' : 'none';
+            }
+        }
+    
+        const userIconLink = document.querySelector('a[onclick="toggleUserPopup()"]');
+        if (userIconLink) {
+            userIconLink.addEventListener('click', toggleUserPopup);
+        }
+    
+        // 登出功能
+        function logout() {
+            window.location.href = '/logout';
+        }
+    
+        const logoutButton = document.getElementById('logoutButton');
+        if (logoutButton) {
+            logoutButton.addEventListener('click', logout);
+        }
+    });
+    </script>
+</body>
+</html>

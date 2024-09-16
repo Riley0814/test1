@@ -1,0 +1,96 @@
+main.container {
+  width: 100%;
+  max-width: 600px;
+  position: fixed;
+  left: 50%;
+  top: 200px;
+  transform: translateX(-50%);
+}
+@media (max-width: 768px) {
+  main.container {
+    width: calc(100% - 15px);
+  }
+}
+main.container h2 {
+  text-align: center;
+  color: white;
+  font-size: 3rem;
+  padding: 0;
+  margin: 0;
+}
+@media (max-width: 768px) {
+  main.container h2 {
+    font-size: 2.5rem;
+  }
+}
+@media (max-width: 640px) {
+  main.container h2 {
+    font-size: 2rem;
+  }
+}
+main.container #content {
+  margin-top: 12px;
+  padding: 30px;
+  border-radius: 8px;
+  background-color: rgb(250, 250, 250);
+  box-shadow: 2px 2px 8px 1px rgba(3, 3, 3, 0.12);
+}
+@media (max-width: 768px) {
+  main.container #content {
+    padding: 18px;
+  }
+}
+main.container #content .item {
+  margin-bottom: 1rem;
+}
+main.container #content .item:first-child {
+  margin-top: 10px;
+}
+@media (max-width: 640px) {
+  main.container #content .item:first-child {
+    margin-top: 7px;
+  }
+}
+main.container #content .item input {
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 10px;
+  outline: unset;
+  border: unset;
+}
+main.container #content .buttons {
+  margin-top: 25px;
+  text-align: center;
+}
+main.container #content .buttons button#login {
+  background-color: rgb(213, 181, 142);
+  width: 100%;
+  font-weight: bold;
+  margin-bottom: 5px;
+  padding: 13px 5px;
+}
+@media (max-width: 640px) {
+  main.container #content .buttons button#login {
+    padding: 8px;
+  }
+}
+main.container #content .buttons button.light {
+  font-weight: bold;
+}
+
+input,
+button#login {
+  font-size: 1.3rem;
+}
+@media (max-width: 768px) {
+  input,
+  button#login {
+    font-size: 1.1rem;
+  }
+}
+@media (max-width: 640px) {
+  input,
+  button#login {
+    font-size: 1rem;
+  }
+}/*# sourceMappingURL=login.css.map */

@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tea Lounge</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #fff;
+        }
+        .logo-section {
+            display: flex;
+            align-items: center;
+        }
+        .logo {
+            width: 180px;
+            height: 70px;
+            margin-right: 20px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+        nav ul li {
+            margin-right: 20px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 18px;
+        }
+        .icons a {
+            margin-left: 20px;
+            cursor: pointer;
+        }
+        .icons img {
+            width: 24px;
+            height: 24px;
+        }
+        .form-container {
+            width: 80%;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .form-header h2 {
+            margin: 0;
+            color: #333;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .form-group input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #4a4a4a;
+        }
+        .submit-btn {
+            display: block;
+            width: 200px;
+            margin: 0 auto;
+            padding: 10px;
+            background-color: #4a4a4a;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .submit-btn:hover {
+            background-color: #333;
+        }
+        footer {
+            background-color: #fff;
+            padding: 15px;
+            text-align: center;
+            border-top: 1px solid #ddd;
+        }
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer-logo h2 {
+            text-align: center;
+            color: #7cbd8b;
+        }
+        .footer-links a {
+            margin-left: 20px;
+        }
+        .footer-links img {
+            width: 24px;
+            height: 24px;
+        }
+        footer h3 {
+            margin: 10px 0 0;
+            color: #6d6d6d;
+            font-size: 13px;
+            text-align: left;
+        }
+        footer h4 {
+            margin: 10px 0 0;
+            color: #838383;
+            font-size: 12px;
+            text-align: left;
+        }
+        footer p {
+            margin: 10px 0 0;
+            color: #9b9b9b;
+            font-size: 10px;
+        }
+         .user-popup {
+            display: none;
+            position: absolute;
+            top: 60px; /* 調整位置 */
+            right: 20px; /* 調整位置 */
+            width: 120px; /* 縮小寬度 */
+            background-color: #e1e9f4;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            z-index: 1000;
+        }
+        .user-popup {
+            display: none;
+            position: absolute;
+            top: 60px; /* 調整位置 */
+            right: 20px; /* 調整位置 */
+            width: 150px;
+            background-color: #e1e9f4;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            z-index: 1000;
+        }
+        .user-popup a {
+            display: block;
+            color: #333;
+            text-decoration: none;
+            padding: 5px 0;
+            text-align: center;
+        }
+        .user-popup a:hover {
+            background-color: #E8EAE6;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #E8EAE6;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            color: #5E6D79;
+        }
+        .btn:hover {
+            background-color: #E8EAE6;
+        }
+        .icons img {
+            cursor: pointer;
+        }
+        .logout-button {
+            display: block;
+            width: 100px;
+            margin: 10px auto;
+            padding: 5px;
+            background-color: #d3d7e0;
+            color: #000;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+        }
+        .cart-icon {
+            position: relative;
+            display: inline-block;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: #ff0000; /* 設置徽章背景顏色 */
+            color: #fff; /* 設置徽章文字顏色 */
+            border-radius: 50%;
+            width: 20px; /* 設置徽章的寬度 */
+            height: 20px; /* 設置徽章的高度 */
+            text-align: center;
+            line-height: 20px; /* 垂直居中文字 */
+            font-size: 12px; /* 設置徽章中文字的大小 */
+            font-weight: bold;
+            display: none;
+        }
+        .order-details {
+            background-color: #eef3f8;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 800px; /* 設置一個最大寬度，避免內容過寬 */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin: 20px auto; /* 上下居中 */
+        }
+       
+        .back-button {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #7b9272;
+        }
+       
+        .back-button img {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+       
+        .container {
+            display: flex;
+            justify-content: center; /* 水平居中 */
+            align-items: center; /* 垂直居中 */
+            min-height: 100vh; /* 讓容器填滿整個螢幕高度 */
+        }
+       
+        .order-summary {
+            background-color: #dfe6de;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+       
+        .summary-item {
+            width: 48%;
+            margin-bottom: 10px;
+        }
+       
+        .summary-item span:first-child {
+            font-weight: bold;
+            color: #555;
+            margin-right: 10px;
+        }
+       
+        .order-items {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+       
+        .order-items th,
+        .order-items td {
+            padding: 10px;
+            text-align: left;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            background-color: #e7ede5;
+        }
+       
+        .order-total {
+            background-color: #dfe6de;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+       
+        .total-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+       
+        .total-amount {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+        }
+       
+        .shipping-info {
+            background-color: #dfe6de;
+            padding: 15px;
+            border-radius: 5px;
+        }
+       
+        .info-item {
+            margin-bottom: 10px;
+        }
+       
+        .info-item span:first-child {
+            font-weight: bold;
+            color: #555;
+            margin-right: 10px;
+        }
+       
+        .info-item input[type="checkbox"] {
+            margin-left: 5px;
+        }
+       
+        .shipping-info span:last-child {
+            color: #333;
+        }
+    </style>
+
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="logo-section">
+                <a href="{{ url_for('home') }}"><img src="{{ url_for('static', filename='images/logo_home.png') }}" alt="Tea Lounge Logo" class="logo"></a>
+            </div>
+             <div class="icons">
+                <a href="{{ url_for('cart') }}" class="cart-icon">
+                    <img src="{{ url_for('static', filename='images/cart.png') }}" alt="Cart Icon">
+                    <span class="cart-badge" id="cart-count"></span>
+                </a>
+                {% if current_user.is_authenticated %}
+                <a onclick="toggleUserPopup()"><img src="{{ url_for('static', filename='images/user.png') }}" alt="User Icon"></a>
+            {% else %}
+                <a href="/login"><img src="{{ url_for('static', filename='images/user.png') }}" alt="User Icon"></a>
+            {% endif %}
+        </div>
+        </header>
+        
+        <!-- 用戶彈出框 -->
+        <div id="userPopup" class="user-popup" style="display: none;">
+            <a href="/member">會員資料</a>
+            <a href="/order">訂單查詢</a>
+            <hr>
+            <form action="{{ url_for('logout') }}" method="post">
+                <button type="submit" class="btn">登出</button>
+            </form> 
+        </div>
+
+
+    <div class="container">
+        <div class="order-details">
+            <div class="back-button">
+                <a href="{{ url_for('order') }}">返回</a>
+                <img src="{{ url_for('static', filename='images/back.png') }}" alt="返回">
+                <span>明細內容</span>
+            </div>
+            <div class="order-summary">
+                <div class="summary-item">
+                    <span>訂購日期</span>
+                    <span>{{ order.OrderDate.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+                </div>
+                <div class="summary-item">
+                    <span>訂單編號</span>
+                    <span>{{ order.OrderID }}</span>
+                </div>
+                <div class="summary-item">
+                    <span>訂單狀態</span>
+                    <span class="{% if order.OrderStatusID == 1 %}status_pending{% elif order.OrderStatusID == 2 %}status_handling{% elif order.OrderStatusID == 3 %}status_complete{% elif order.OrderStatusID == 4 %}status_cancel{% endif %}">
+                        {% if order.OrderStatusID == 1 %}待確定
+                        {% elif order.OrderStatusID == 2 %}處理中
+                        {% elif order.OrderStatusID == 3 %}已完成
+                        {% elif order.OrderStatusID == 4 %}已取消
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="summary-item">
+                    <span>付款狀態</span>
+                    <span class="{% if order.PaymentStatusID == 1 %}status_unpaid{% elif order.PaymentStatusID == 2 %}status_paid{% elif order.PaymentStatusID == 3 %}status_cancel{% elif order.PaymentStatusID == 4 %}status_refund{% endif %}">
+                        {% if order.PaymentStatusID == 1 %}未付款
+                        {% elif order.PaymentStatusID == 2 %}已付款
+                        {% elif order.PaymentStatusID == 3 %}已取消
+                        {% elif order.PaymentStatusID == 4 %}已退款
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="summary-item">
+                    <span>配送狀態</span>
+                    <span class="{% if order.DeliveryStatusID == 1 %}status_handling{% elif order.DeliveryStatusID == 2 %}status_pending{% elif order.DeliveryStatusID == 3 %}status_shipped{% elif order.DeliveryStatusID == 4 %}status_arrived{% elif order.DeliveryStatusID == 5 %}status_return{% elif order.DeliveryStatusID == 6 %}status_cancel{% endif %}">
+                        {% if order.DeliveryStatusID == 1 %}備貨中
+                        {% elif order.DeliveryStatusID == 2 %}處理中
+                        {% elif order.DeliveryStatusID == 3 %}已發貨
+                        {% elif order.DeliveryStatusID == 4 %}已送達
+                        {% elif order.DeliveryStatusID == 5 %}已退回
+                        {% elif order.DeliveryStatusID == 6 %}已取消
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="summary-item">
+                    <span>訂單完成日期</span>
+                    <span>{{ order.completion_date.strftime('%Y-%m-%d') if order.completion_date else 'N/A' }}</span>
+                </div>
+            </div>
+            
+            <div class="order-items">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>商品名稱</th>
+                            <th>數量</th>
+                            <th>小計</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.order_details %}
+                        <tr>
+                            <td>{{ item.ProductName }}</td>
+                            <td>{{ item.Quantity }}</td>
+                            <td>NT$ {{ item.TotalPrice }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="order-total">
+                <div class="total-item">
+                    <span>商品小計</span>
+                    <span>NT$ {{ order.Subtotal }}</span>
+                </div>
+                <div class="total-item">
+                    <span>運費</span>
+                    <span>NT$ {{ order.ShippingFee }}</span>
+                </div>
+                <div class="total-item total-amount">
+                    <span>總計金額</span>
+                    <span>NT$ {{ order.TotalPrice }}</span>
+                </div>
+            </div>
+            
+            <div class="shipping-info">
+                {% if unique_details %}
+                <div class="info-item">
+                    <span>收件人</span>
+                    <span>{{ unique_details.ReceiverName }}</span>
+                </div>
+                <div class="info-item">
+                    <span>收件人電話</span>
+                    <span>{{ unique_details.ReceiverPhone }}</span>
+                </div>
+                <div class="info-item">
+                    <span>收件地址</span>
+                    <span>{{ unique_details.ShippingAddress }}</span>
+                </div>
+                <div class="info-item">
+                    <span>備註</span>
+                    <span>{{ unique_details.RemittanceCode }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+
+     <footer>
+         <div class="footer-container">
+             <div class="footer-logo">
+                 <h2>Tea Lounge</h2>
+                 <h3>聯絡資訊</h3>
+                 <h4>
+                     客服專線：0981-509-558<br>
+                     信箱：rcdesign03@gmail.com
+                 </h4>
+             </div>
+             <div class="footer-links">
+                 <a href="https://www.facebook.com/teacafelounge"><img src="{{ url_for('static', filename='images/FB.png') }}" alt="Facebook Icon"></a>
+                 <a href="https://www.instagram.com/food.is.shiny?igsh=MXZ5anJ2cmx1aHZlbw=="><img src="{{ url_for('static', filename='images/IG.png') }}" alt="Instagram Icon"></a>
+                 <a href="https://lin.ee/f2KTSUE"><img src="{{ url_for('static', filename='images/LINE.png') }}" alt="LINE Icon"></a>
+             </div>
+         </div>
+         <p>©Tea Lounge 時尚品茶餐飲</p>
+     </footer>
+   
+    <script>
+        function toggleUserPopup() {
+            console.log('Triggered');
+            const userPopup = document.getElementById('userPopup');
+            if (userPopup) {
+                userPopup.style.display = userPopup.style.display === 'none' || userPopup.style.display === '' ? 'block' : 'none';
+            }
+        }
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            const userIcon = document.querySelector(".icons a img");
+            if (userIcon) {
+                userIcon.addEventListener("click", function(event) {
+                    event.stopPropagation();  // 防止事件冒泡
+                    toggleUserPopup();
+                });
+            }
+    
+            // 更新購物車徽章顯示
+            const cartCountElement = document.getElementById('cart-count');
+        
+            const updateCartBadge = (itemCount) => {
+                cartCountElement.textContent = itemCount > 0 ? itemCount : '';
+                cartCountElement.style.display = itemCount > 0 ? 'block' : 'none';
+            };
+        
+            const calculateCartItemCount = () => {
+                let totalQuantity = 0;
+        
+                try {
+                    // 獲取 local storage 購物車數據
+                    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                    
+                    // 計算所有商品的總數量
+                    cart.forEach(item => {
+                        if (item.quantity) {
+                            totalQuantity += item.quantity;
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error parsing cart data from local storage:', error);
+                }
+        
+                return totalQuantity;
+            };
+        
+            // 計算購物車數量並更新徽章
+            const itemCount = calculateCartItemCount();
+            updateCartBadge(itemCount);
+        });
+    </script>
+
+</body>
+</html>

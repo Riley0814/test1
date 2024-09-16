@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>新增產品</title>
+    <style>
+        body {
+            font-size: 20px;
+            font-family: Arial, sans-serif;
+        }
+        label {
+            font-size: 24px;
+        }
+        input, button {
+            font-size: 20px;
+            margin-bottom: 10px;
+            padding: 8px;
+            width: 300px;
+        }
+        .message {
+            font-size: 20px;
+            margin-bottom: 10px;
+            padding: 8px;
+        }
+        .message.success {
+            color: green;
+        }
+        .message.error {
+            color: red;
+        }
+        #images-preview {
+            margin-top: 10px;
+        }
+        #images-preview img {
+            max-width: 300px;
+            max-height: 300px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const form = document.querySelector('form');
+            const nameInput = document.getElementById('name');
+
+            // 將游標移回名稱欄位
+            nameInput.focus();
+
+            form.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    this.submit();
+                }
+            });
+
+            form.addEventListener('submit', function () {
+                // 顯示Loading狀態或其他提示，確保用戶知道表單正在處理中
+                // 可以使用spinner或文字提示
+                setTimeout(function () {
+                    nameInput.focus();
+                }, 10);
+            });
+
+            // 預覽上傳的圖片
+            const imagesInput = document.getElementById('images');
+            const previewContainer = document.getElementById('images-preview');
+
+            imagesInput.addEventListener('change', function () {
+                previewContainer.innerHTML = '';
+                const files = this.files;
+                for (const file of files) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        previewContainer.appendChild(img);
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>新增產品</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="message-container">
+                {% for category, message in messages %}
+                    <div class="message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <form action="{{ url_for('add_product') }}" method="post" enctype="multipart/form-data">
+        <label for="name">名稱:</label>
+        <input type="text" id="name" name="ProductName" required><br><br>
+        
+        <label for="quantity">數量:</label>
+        <input type="number" id="quantity" name="Quantity" required><br><br>
+        
+        <label for="price">價格:</label>
+        <input type="text" id="price" name="Price" required><br><br>
+        
+        <label for="images">產品圖片:</label>
+        <input type="file" id="images" name="images" accept="image/*" multiple><br>
+        <div id="images-preview"></div><br>
+        
+        <button type="submit">提交</button>
+    </form>
+</body>
+</html>

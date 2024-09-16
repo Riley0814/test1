@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.ProductName }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+        }
+        .product-info, .product-images {
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin: 10px;
+        }
+        .product-info {
+            flex: 1;
+            max-width: 600px;
+        }
+        .product-images {
+            flex: 1;
+            max-width: 400px;
+        }
+        .product-images img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+        .product-header {
+            display: flex;
+            align-items: center; /* 使內容垂直居中對齊 */
+        }
+        
+        .product-info h1 {
+            margin: 0; /* 移除 h1 的 margin 以確保對齊 */
+            padding-right: 10px; /* 添加 padding 來保持 h1 和標籤之間的距離 */
+            display: inline-block;
+        }
+
+        .product-info p {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        .product-price {
+            font-size: 24px;
+            color: #d69f96;
+            margin: 20px 0;
+        }
+        .quantity-container {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .quantity-container input {
+            width: 60px;
+            height: 30px;
+            text-align: center;
+            margin: 0 10px;
+            font-size: 16px;
+        }
+        .quantity-container button {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 30px;
+            height: 30px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            width: 80%;
+        }
+        .buttons button {
+            flex: 1;
+            padding: 15px;
+            font-size: 14px;
+            cursor: pointer;
+            border: 1px solid #596688;
+            border-radius: 4px;
+            margin: 0 5px;
+        }
+        .buttons button.buy-now {
+            background-color: #596688;
+            color: #fff;
+        }
+        .thumbnails {
+            display: flex;
+            gap: 5px;
+        }
+        .thumbnails img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+        .thumbnails img:hover, .thumbnails img.selected {
+            border: 2px solid #819c9e;
+        }
+        /* Dialog styles */
+        .dialog-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .dialog {
+            background: #fff;
+            padding: 20px;
+            border-radius: 4px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        .dialog button {
+            padding: 10px 20px;
+            background: #596688;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .buttons button.disabled {
+            background-color: grey;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .out-of-stock-label {
+            background-color: rgba(255, 0, 0, 0.7);
+            color: #fff;
+            padding: 3px 7px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            border: 2px solid; 
+            display: inline-block;
+            line-height: normal; /* 恢復正常行高 */
+            vertical-align: middle; /* 確保標籤垂直居中 */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="product-images">
+            {% if product.images %}
+                <img id="main-image" src="{{ url_for('static', filename='uploads/' + product.images[0].ImagePath) }}" alt="{{ product.ProductName }}">
+                <div class="thumbnails">
+                    {% for image in product.images %}
+                    <img src="{{ url_for('static', filename='uploads/' + image.ImagePath) }}" alt="小圖{{ loop.index }}">
+                    {% endfor %}
+                </div>
+            {% else %}
+                <img id="main-image" src="{{ url_for('static', filename='default.jpg') }}" alt="無圖">
+            {% endif %}
+        </div>
+        <div class="product-info">
+            <div class="product-header">
+                <h1>{{ product.ProductName }}</h1>
+                {% if not product.is_available %}
+                <span class="out-of-stock-label">已售完</span>
+                {% endif %}
+            </div>
+            <p>{{ product.Notes }}</p>
+            <p>成分: {{ product.Ingredients }}</p>
+            <p>產地: {{ product.Origin }}</p>
+            <div class="product-price">${{ product.Price }}</div>
+            <div class="quantity-container">
+                <button id="decrease">-</button>
+                <input type="text" id="quantity" value="1" readonly>
+                <button id="increase">+</button>
+            </div>
+            <div class="buttons">
+                <button class="add-to-cart{% if not product.is_available %} disabled{% endif %}">加入購物車</button>
+                <button class="buy-now{% if not product.is_available %} disabled{% endif %}">立即購買</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dialog -->
+    <div class="dialog-overlay" id="confirmation-dialog">
+        <div class="dialog">
+            <p id="dialog-message">您已成功將商品加入購物車。</p>
+            <button id="dialog-ok">確定</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const thumbnails = document.querySelectorAll('.thumbnails img');
+            const mainImage = document.getElementById('main-image');
+            const quantityInput = document.getElementById('quantity');
+            const increaseButton = document.getElementById('increase');
+            const decreaseButton = document.getElementById('decrease');
+            const addToCartButton = document.querySelector('.add-to-cart');
+            const buyNowButton = document.querySelector('.buy-now');
+            const dialogOverlay = document.getElementById('confirmation-dialog');
+            const dialogOkButton = document.getElementById('dialog-ok');
+    
+            function showConfirmationDialog(message) {
+                const dialogMessage = document.getElementById('dialog-message');
+                dialogMessage.textContent = message;
+                dialogOverlay.style.display = 'flex';
+            }
+    
+            function updateCart() {
+                const productName = '{{ product.ProductName }}';
+                const productPrice = parseInt('{{ product.Price }}');
+                const quantity = parseInt(quantityInput.value);
+                if (isNaN(quantity) || quantity <= 0) {
+                    console.error("Invalid quantity value:", quantity);
+                    return;
+                }
+                const subtotal = productPrice * quantity;
+    
+                let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                const existingItem = cart.find(item => item.name === productName);
+    
+                if (existingItem) {
+                    existingItem.quantity += quantity;
+                    existingItem.subtotal += subtotal;
+                } else {
+                    cart.push({ name: productName, quantity, subtotal });
+                }
+    
+                localStorage.setItem('cart', JSON.stringify(cart));
+            }
+    
+            function handleButtonActions() {
+                // Use a boolean value for isAuthenticated
+                const isAuthenticated = {{ is_authenticated | tojson }};
+                
+                if (isAuthenticated) {
+                    addToCartButton.addEventListener('click', function () {
+                        updateCart();
+                        showConfirmationDialog("您已成功將商品加入購物車。");
+                    });
+    
+                    buyNowButton.addEventListener('click', function () {
+                        updateCart();
+                        window.location.href = "{{ url_for('cart') }}"; // Replace with actual cart URL
+                    });
+                } else {
+                    addToCartButton.addEventListener('click', function () {
+                        showConfirmationDialog("請先登入以加入購物車。");
+                    });
+    
+                    buyNowButton.addEventListener('click', function () {
+                        showConfirmationDialog("請先登入以立即購買。");
+                    });
+                }
+            }
+    
+            thumbnails.forEach(thumbnail => {
+                thumbnail.addEventListener('click', function () {
+                    thumbnails.forEach(img => img.classList.remove('selected'));
+                    thumbnail.classList.add('selected');
+                    mainImage.src = thumbnail.src;
+                });
+            });
+    
+            increaseButton.addEventListener('click', function () {
+                let currentValue = parseInt(quantityInput.value);
+                quantityInput.value = currentValue + 1;
+            });
+    
+            decreaseButton.addEventListener('click', function () {
+                let currentValue = parseInt(quantityInput.value);
+                if (currentValue > 1) {
+                    quantityInput.value = currentValue - 1;
+                }
+            });
+    
+            handleButtonActions();
+    
+            dialogOkButton.addEventListener('click', function () {
+                dialogOverlay.style.display = 'none';
+                window.location.href = "{{ url_for('home') }}"; // Replace with actual home URL
+            });
+        });
+    </script>
+</body>
+</html>

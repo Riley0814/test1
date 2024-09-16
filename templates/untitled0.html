@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>側邊選單</title>
+    <style>
+        /* 基本樣式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 選單按鈕樣式 */
+        .menu-btn {
+            font-size: 30px;
+            cursor: pointer;
+            padding: 10px;
+            margin: 10px;
+        }
+
+        /* 選單內容樣式 */
+        .side-menu {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #333;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
+
+        .side-menu a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .side-menu a:hover {
+            background-color: #575757;
+        }
+
+        /* 關閉按鈕樣式 */
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 36px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 三條線按鈕 -->
+    <span class="menu-btn" onclick="openMenu()">&#9776;</span>
+
+    <!-- 側邊選單 -->
+    <div id="sideMenu" class="side-menu">
+        <a href="javascript:void(0)" class="close-btn" onclick="closeMenu()">&times;</a>
+        <a href="#">首頁</a>
+        <a href="#">產品</a>
+        <a href="#">關於我們</a>
+        <a href="#">聯絡我們</a>
+    </div>
+
+    <script>
+        // 打開選單
+        function openMenu() {
+            document.getElementById("sideMenu").style.width = "250px";
+        }
+
+        // 關閉選單
+        function closeMenu() {
+            document.getElementById("sideMenu").style.width = "0";
+        }
+    </script>
+
+</body>
+</html>

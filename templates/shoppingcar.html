@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>購物車</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #fff;
+        }
+        .logo-section {
+            display: flex;
+            align-items: center;
+        }
+        .logo {
+            width: 180px;
+            height: 70px;
+            margin-right: 20px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+        nav ul li {
+            margin-right: 20px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 18px;
+        }
+        .icons a {
+            margin-left: 20px;
+            cursor: pointer;
+        }
+        .icons img {
+            width: 24px;
+            height: 24px;
+        }
+        .cart-container {
+            width: 80%;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            text-align: center;
+        }
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .cart-header h2 {
+            margin: 0;
+            color: #333;
+        }
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .cart-table th, .cart-table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        .cart-table th {
+            background-color: #f8f8f8;
+        }
+        .cart-summary {
+            text-align: right;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .checkout-btn {
+            display: block;
+            width: 200px;
+            margin: 0 auto;
+            padding: 10px;
+            background-color: #4a4a4a;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .checkout-btn:hover {
+            background-color: #333;
+        }
+        footer {
+            background-color: #fff;
+            padding: 15px;
+            text-align: center;
+            border-top: 1px solid #ddd;
+        }
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer-logo h2 {
+            text-align: center;
+            color: #7cbd8b;
+        }
+        .footer-links a {
+            margin-left: 20px;
+        }
+        .footer-links img {
+            width: 24px;
+            height: 24px;
+        }
+        footer h3 {
+            margin: 10px 0 0;
+            color: #6d6d6d;
+            font-size: 13px;
+            text-align: left;
+        }
+        footer h4 {
+            margin: 10px 0 0;
+            color: #838383;
+            font-size: 12px;
+            text-align: left;
+        }
+        footer p {
+            margin: 10px 0 0;
+            color: #9b9b9b;
+            font-size: 10px;
+        }
+        .user-popup {
+            display: none;
+            position: absolute;
+            top: 60px; /* 調整位置 */
+            right: 20px; /* 調整位置 */
+            width: 150px;
+            background-color: #e1e9f4;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            z-index: 1000;
+        }
+        .user-popup a {
+            display: block;
+            color: #333;
+            text-decoration: none;
+            padding: 5px 0;
+            text-align: center;
+        }
+        .user-popup a:hover {
+            background-color: #E8EAE6;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #E8EAE6;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            color: #5E6D79;
+        }
+        .btn:hover {
+            background-color: #E8EAE6;
+        }
+        
+        .icons img {
+            cursor: pointer;
+        }
+        .logout-button {
+            display: block;
+            width: 100px;
+            margin: 10px auto;
+            padding: 5px;
+            background-color: #d3d7e0;
+            color: #000;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+        }
+        .quantity-btn, .delete-btn {
+            padding: 5px;
+            border: none;
+            cursor: pointer;
+        }
+       
+        .quantity-btn {
+            background-color: #f0f0f0;
+        }
+       
+        .quantity-btn:hover {
+            background-color: #ddd;
+        }
+       
+        .delete-btn {
+            background-color: #d3d3d3; /* 淺灰色 */
+            color: #000; /* 黑色文字 */
+        }
+       
+        .delete-btn:hover {
+            background-color: #b0b0b0; /* 更深的灰色 */
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo-section">
+                <a href="{{ url_for('home') }}"><img src="{{ url_for('static', filename='images/logo_home.png') }}" alt="Tea Lounge Logo" class="logo"></a>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="{{ url_for('home') }}">所有商品</a></li>
+                    <li><a href="{{ url_for('group') }}">團購專區</a></li>
+                    <li><a href="{{ url_for('about') }}">關於我們</a></li>
+                    <li><a href="{{ url_for('contact') }}">聯絡我們</a></li>
+                </ul>
+            </nav>
+            <div class="icons">
+                <a href="{{ url_for('cart') }}" class="cart-icon">
+                    <img src="{{ url_for('static', filename='images/cart.png') }}" alt="Cart Icon">
+                    <span class="cart-badge" id="cart-count"></span>
+                </a>
+                {% if current_user.is_authenticated %}
+                <a onclick="toggleUserPopup()"><img src="{{ url_for('static', filename='images/user.png') }}" alt="User Icon"></a>
+            {% else %}
+                <a href="/login"><img src="{{ url_for('static', filename='images/user.png') }}" alt="User Icon"></a>
+            {% endif %}
+        </div>
+        </header>
+
+        <!-- 用戶彈出框 -->
+        <div id="userPopup" class="user-popup" style="display: none;">
+            <a href="/member">會員資料</a>
+            <a href="/order">訂單查詢</a>
+            <hr>
+            <form action="{{ url_for('logout') }}" method="post">
+                <button type="submit" class="btn">登出</button>
+            </form> 
+        </div>
+
+    <div class="cart-container">
+        <div class="cart-header">
+            <h2>購物車內容</h2>
+        </div>
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>商品名稱</th>
+                    <th>數量</th>
+                    <th>小計</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="cartItems">
+            </tbody>
+        </table>
+        <div class="cart-summary">
+            <span>總額：</span>
+            <span id="cartTotal"></span>
+        </div>
+        <a href="{{ url_for('pay') }}" class="checkout-btn">立即結帳</a>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-logo">
+                <h2>Tea Lounge</h2>
+                <h3>聯絡資訊</h3>
+                <h4>
+                客服專線：0981-509-558<br>
+                信箱：rcdesign03@gmail.com</h4>
+            </div>
+            <div class="footer-links">
+                <a href="https://www.facebook.com/teacafelounge"><img src="{{ url_for('static', filename='images/FB.png') }}" alt="Facebook Icon"></a>
+                <a href="https://www.instagram.com/food.is.shiny?igsh=MXZ5anJ2cmx1aHZlbw=="><img src="{{ url_for('static', filename='images/IG.png') }}" alt="Instagram Icon"></a>
+                <a href="https://lin.ee/f2KTSUE"><img src="{{ url_for('static', filename='images/LINE.png') }}" alt="LINE Icon"></a>
+            </div>
+        </div>
+    </footer>
+    <script>
+        const products = {}; // 初始化 products 物件
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchCartItems();   // 獲取購物車項目
+        });
+        
+        function fetchProductData(productName) {
+            return fetch(`/get_product_by_name/${encodeURIComponent(productName)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ProductID) {
+                        products[productName] = {
+                            id: data.ProductID,
+                            price: parseFloat(data.price)
+                        };
+                        return products[productName]; // 返回產品資料
+                    } else {
+                        console.error('Failed to fetch product data:', data.error);
+                        return null;
+                    }
+                })
+                .catch(error => {
+                    console.error('Failed to fetch product data:', error);
+                    return null;
+                });
+        }
+
+        
+        // 獲取購物車項目
+        function fetchCartItems() {
+            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            updateCartDisplay(cartItems);
+        }
+        
+        function updateCartDisplay(cartItems) {
+            console.log('Updating cart display with:', cartItems);
+            const cartItemsElement = document.getElementById('cartItems');
+            const cartTotalElement = document.getElementById('cartTotal');
+        
+            let cartTotal = 0;
+        
+            cartItemsElement.innerHTML = ''; // 清除現有項目
+        
+            cartItems.forEach((item, index) => {
+                console.log('Item:', item);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.name}</td>
+                    <td>
+                        <button class="quantity-btn" onclick="changeQuantity(${index}, -1)">-</button>
+                        <span id="quantity-${index}">${item.quantity || 0}</span>
+                        <button class="quantity-btn" onclick="changeQuantity(${index}, 1)">+</button>
+                    </td>
+                    <td id="subtotal-${index}">${item.subtotal.toFixed(2)}</td>
+                    <td><button class="delete-btn" onclick="removeItem(${index})">刪除</button></td>
+                `;
+                cartItemsElement.appendChild(row);
+                cartTotal += item.subtotal;
+            });
+        
+            cartTotalElement.textContent = cartTotal.toFixed(2); // 更新總額
+        }
+        
+        // 更新數量
+        function changeQuantity(index, change) {
+            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            const item = cartItems[index];
+        
+            if (item) {
+                item.quantity += change;
+        
+                // 確保數量不為負
+                if (item.quantity <= 0) {
+                    cartItems.splice(index, 1); // 如果數量為零或更少則移除項目
+                } else {
+                    // 確保產品資料已經加載
+                    if (products[item.name] && products[item.name].price !== undefined) {
+                        // 更新小計
+                        item.subtotal = item.quantity * products[item.name].price;
+                    } else {
+                        // 如果產品資料未加載，則嘗試從後端獲取產品數據
+                        fetchProductData(item.name).then(product => {
+                            if (product) {
+                                item.subtotal = item.quantity * product.price;
+                                localStorage.setItem('cart', JSON.stringify(cartItems));
+                                fetchCartItems(); // 刷新顯示
+                            }
+                        });
+                        return; // 等待產品數據加載完成
+                    }
+                }
+        
+                localStorage.setItem('cart', JSON.stringify(cartItems));
+                fetchCartItems(); // 刷新顯示
+            }
+        }
+
+        // 刪除項目
+        function removeItem(index) {
+            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            cartItems.splice(index, 1); // 從購物車中移除項目
+            localStorage.setItem('cart', JSON.stringify(cartItems));
+            fetchCartItems(); // 刷新顯示
+        }
+        
+        function addItemToCart(product) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+           
+            if (!product.name) {
+                console.error('Product name 缺失');
+                return;
+            }
+       
+            const existingItemIndex = cart.findIndex(item => item.name === product.name);
+            if (existingItemIndex >= 0) {
+                cart[existingItemIndex].quantity += product.quantity;
+                cart[existingItemIndex].subtotal = cart[existingItemIndex].price * cart[existingItemIndex].quantity;
+            } else {
+                product.subtotal = product.price * product.quantity;
+                cart.push(product);
+            }
+       
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartDisplay();
+        }
+        function toggleUserPopup() {
+            const userPopup = document.getElementById('userPopup');
+            if (userPopup) {
+                userPopup.style.display = userPopup.style.display === 'none' || userPopup.style.display === '' ? 'block' : 'none';
+            }
+        }
+        document.querySelector('.checkout-btn').addEventListener('click', async function(event) {
+            event.preventDefault();
+            
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            
+            for (let item of cart) {
+                try {
+                    const response = await fetch(`/get_product_by_name/${encodeURIComponent(item.name)}`);
+                    const data = await response.json();
+                    if (data.ProductID) {
+                        item.productId = data.ProductID; // 確保 productId 被設置
+                    } else {
+                        console.error('Error:', data.error);
+                        alert(`查找產品失敗：${data.error}`);
+                        return;  // 遇到錯誤則停止結帳流程
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('查找產品時發生錯誤，請稍後再試');
+                    return;  // 遇到錯誤則停止結帳流程
+                }
+            }
+        
+            fetch('/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ cartItems: cart })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('結帳成功');
+                    localStorage.removeItem('cart'); // 清空購物車
+                    window.location.href = "{{ url_for('pay') }}"; 
+                } else {
+                    alert('結帳失敗：' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('結帳失敗', error);
+                alert('結帳失敗：請稍後再試');
+            });
+            // 登出功能
+            function logout() {
+                window.location.href = '/logout';
+            }
+        
+            const logoutButton = document.getElementById('logoutButton');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', logout);
+            }
+        });
+    </script>
+
+
+</body>
+</html>
